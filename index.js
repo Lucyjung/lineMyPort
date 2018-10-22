@@ -6,8 +6,6 @@ const config = require('./src/config');
 // Start Host Server
 const server = Hapi.server(config.application);
 
-server.connection({ routes: { cors: true } });
-
 // Setting Controller route
 for (let route in routes) {
     server.route(routes[route]);

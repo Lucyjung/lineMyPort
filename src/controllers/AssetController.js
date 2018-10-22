@@ -22,41 +22,32 @@ module.exports = {
             msg: ''
         };
         if (request.params.user){
-            let assetList = [];
-            let fundList = [];
+            
             let assetSnap = await Asset.getUserAsset(request.params.user);
-            await assetSnap.forEach(async (asset) => {
-                let assetInfo = {
-                    symbol: asset.data().name,
-                    type: asset.data().type,
-                    cost: asset.data().cost,
-                    volume: asset.data().volume,
-                    avgCost: asset.data().cost/asset.data().volume,
-                    marketPrice: 0
-                };
-                let price = 0;
-                if (asset.data().type == 'Stock'){
-                    price = await YahooFin.getPrice(asset.data().name);
-                    if (price){
-                        assetInfo.marketPrice = price;
-                    }
-                }
-                else if (asset.data().type == 'Fund'){
-                    fundList.push(asset.data().name);
-                }
-                assetList.push(assetInfo);
-            });
-            if (fundList.length > 0){
-                let fundNav = await Fund.getPrice(fundList);
-                for (let i  in assetList){
-                    if (fundNav[assetList[i].symbol] ){
-                        assetList[i].marketPrice = fundNav[assetList[i].symbol];
+            let list = await getAssetList(assetSnap);
+            if (list.fund.length > 0){
+                let fundNav = await Fund.getPrice(list.fund);
+                for (let i  in list.asset){
+                    if (fundNav && fundNav[list.asset[i].symbol] ){
+                        list.asset[i].marketPrice = fundNav[list.asset[i].symbol];
                     }
                 }
             }
+            if (list.stock.length > 0){
+                for (let i  in list.asset){
+                    if (list.stock.indexOf(list.asset[i].symbol)){
+                        let price = await YahooFin.getPrice(list.asset[i].symbol);
+                        if (price){
+                            list.asset[i].marketPrice = price;
+                        }
+                    }
+                    
+                }
+                
+            }
             returnMsg.status = true;
             returnMsg.msg = 'Success';
-            returnMsg.data = assetList;
+            returnMsg.data = list.asset;
         }
         else{
             returnMsg.msg = 'User Id required';
@@ -126,3 +117,35 @@ module.exports = {
         return response;
     }
 };
+function getAssetList(assetSnap){
+    return new Promise((fulfilled)=> { 
+        let assetList = [];
+        let fundList = [];
+        let stockList = [];
+        assetSnap.forEach( (asset) => {
+            let assetInfo = {
+                symbol: asset.data().name,
+                type: asset.data().type,
+                cost: asset.data().cost,
+                volume: asset.data().volume,
+                
+                marketPrice: 0
+            };
+            if (asset.data().volume > 0){
+                assetInfo.avgCost = asset.data().cost/asset.data().volume;
+            }
+            else{
+                assetInfo.avgCost = 0;
+            }
+            if (asset.data().type == 'Stock'){
+                stockList.push(asset.data().name);
+            }
+            else if (asset.data().type == 'Fund'){
+                fundList.push(asset.data().name);
+            }
+            assetList.push(assetInfo);
+        });
+        fulfilled({fund: fundList, asset: assetList, stock: stockList});
+    });
+    
+}

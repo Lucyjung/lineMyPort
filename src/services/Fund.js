@@ -25,7 +25,7 @@ module.exports = {
 
 function getFundNav(symbols, subtract_day){
 
-    return new Promise((fulfilled) => {
+    return new Promise((fulfilled) => { 
         let fs = require('fs');
         let csv = require('fast-csv');
         let http = require('http');
@@ -47,6 +47,9 @@ function getFundNav(symbols, subtract_day){
                         }
                     }
         
+                })
+                .on('error', function(){
+                    fulfilled(null);
                 })
                 .on('end', function(){
                     fulfilled(result);
