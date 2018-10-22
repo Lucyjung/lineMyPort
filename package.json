@@ -4,9 +4,9 @@
   "description": "The Web service to manage personal wealth for Thai investor",
   "main": "index.js",
   "scripts": {
-    "dev": "node-dev index.js",
+    "start": "node-dev index.js",
     "prod": "webpack -p --mode=production",
-    "start": "webpack-dev-server --history-api-fallback --mode=production"
+    "dev": "webpack-dev-server --history-api-fallback --mode=production"
   },
   "keywords": [
     "Asset"
