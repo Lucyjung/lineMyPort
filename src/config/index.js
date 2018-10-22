@@ -3,7 +3,7 @@ module.exports = function() {
     var configObj = {
         // Host Server Setting
         application: {
-            port: 80
+            port: process.env.PORT ||80
         }
     };
     return configObj;
