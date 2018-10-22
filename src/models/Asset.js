@@ -1,9 +1,9 @@
 var admin = require('firebase-admin');
 
 var serviceAccount = require('./firebasecert.json');
-serviceAccount['project_id'] = process.env.FB_PROJECT_ID || 'fir-1-4004c';
-serviceAccount['private_key_id'] = process.env.FB_PRIVATE_ID  || '5a73a43c715aa4b161a1f51830457269afc1d2d5';
-serviceAccount['client_email'] = process.env.FB_CLIENT_EMAIL || 'firebase-adminsdk-4h3lp@fir-1-4004c.iam.gserviceaccount.com';
+serviceAccount['project_id'] = process.env.FB_PROJECT_ID ;
+serviceAccount['private_key_id'] = process.env.FB_PRIVATE_ID ;
+serviceAccount['client_email'] = process.env.FB_CLIENT_EMAIL;
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     databaseURL: process.env.FBDB_URL
