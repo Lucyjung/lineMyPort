@@ -21,7 +21,6 @@ class MainContainer extends Component{
         this.setState({ data: json.data });
     }
     handleButtonClick(e, props){
-        console.log(props);
         this.setState(() => ({
             show: true
         }));
