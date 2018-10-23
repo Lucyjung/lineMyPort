@@ -4,7 +4,7 @@ module.exports =  [
 
     {
         method: 'GET',
-        path: '/portfoilo/{user?}',
+        path: '/portfolio/{user?}',
         config: {
             cors : true,
         },
