@@ -30,7 +30,12 @@ module.exports = {
                 for (let i  in list.asset){
                     if (fundNav && fundNav[list.asset[i].symbol] ){
                         list.asset[i].marketPrice = fundNav[list.asset[i].symbol];
-                        list.asset[i].PL = (list.asset[i].marketPrice - list.asset[i].cost)/list.asset[i].cost*100;
+                        if (list.asset[i].cost !=  0){
+                            list.asset[i].PL = (list.asset[i].marketPrice - list.asset[i].cost)/list.asset[i].cost*100;
+                        }
+                        else{
+                            list.asset[i].PL = 0;
+                        }
                     }
                 }
             }
@@ -40,7 +45,12 @@ module.exports = {
                         let price = await YahooFin.getPrice(list.asset[i].symbol);
                         if (price){
                             list.asset[i].marketPrice = price;
-                            list.asset[i].PL = (list.asset[i].marketPrice - list.asset[i].cost)/list.asset[i].cost*100;
+                            if (list.asset[i].cost !=  0){
+                                list.asset[i].PL = (list.asset[i].marketPrice - list.asset[i].cost)/list.asset[i].cost*100;
+                            }
+                            else{
+                                list.asset[i].PL = 0;
+                            }
                         }
                     }
                     
@@ -130,7 +140,7 @@ function getAssetList(assetSnap){
                 type: asset.data().type,
                 cost: asset.data().cost,
                 volume: asset.data().volume,
-                
+                PL: asset.data().cost,
                 marketPrice: 0
             };
             if (asset.data().volume > 0){
