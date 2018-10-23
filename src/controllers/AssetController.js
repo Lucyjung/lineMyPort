@@ -30,6 +30,7 @@ module.exports = {
                 for (let i  in list.asset){
                     if (fundNav && fundNav[list.asset[i].symbol] ){
                         list.asset[i].marketPrice = fundNav[list.asset[i].symbol];
+                        list.asset[i].PL = (list.asset[i].marketPrice - list.asset[i].cost)/list.asset[i].cost*100;
                     }
                 }
             }
@@ -39,6 +40,7 @@ module.exports = {
                         let price = await YahooFin.getPrice(list.asset[i].symbol);
                         if (price){
                             list.asset[i].marketPrice = price;
+                            list.asset[i].PL = (list.asset[i].marketPrice - list.asset[i].cost)/list.asset[i].cost*100;
                         }
                     }
                     
