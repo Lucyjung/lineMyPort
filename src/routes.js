@@ -12,7 +12,7 @@ module.exports =  [
     },
     {
         method: 'POST',
-        path: '/portfoilo/buy/{user?}',
+        path: '/portfolio/buy/{user?}',
         config: {
             cors : true,
         },
@@ -20,7 +20,7 @@ module.exports =  [
     },
     {
         method: 'POST',
-        path: '/portfoilo/sell/{user?}',
+        path: '/portfolio/sell/{user?}',
         config: {
             cors : true,
         },
@@ -28,7 +28,7 @@ module.exports =  [
     },
     {
         method: 'POST',
-        path: '/portfoilo/dividend{user?}',
+        path: '/portfolio/dividend{user?}',
         config: {
             cors : true,
         },
@@ -36,7 +36,7 @@ module.exports =  [
     },
     {
         method: 'POST',
-        path: '/portfoilo/update/{user?}',
+        path: '/portfolio/update/{user?}',
         config: {
             cors : true,
         },

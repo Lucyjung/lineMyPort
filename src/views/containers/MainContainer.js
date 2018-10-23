@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ActionModal from '../components/ActionModal';
 import Table from '../components/Table';
-import API from '../utils/api';
+import * as API from '../utils/api';
 let data = [];
 class MainContainer extends Component{
     constructor(props, context) {
