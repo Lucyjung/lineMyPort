@@ -3,7 +3,7 @@ const FILE_NAME = 'fund.csv';
 module.exports = {
 
     getPrice: async (symbols) => {
-        const LIMIT_RETRIES = 5;
+        const LIMIT_RETRIES = 7;
         if (symbols.length <= 0){
             return null;
         }
