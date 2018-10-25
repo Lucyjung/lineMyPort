@@ -16,8 +16,8 @@ const ACTION_SELL = 'SELL';
 const ACTION_DIVIDEND = 'DIVIDEND';
 // [START asset API]
 module.exports ={
-    buyAsset: async (userId, name, vol, type, cost) => {
-        let d = new Date();
+    buyAsset: async (userId, name, vol, type, cost, date) => {
+        let d = new Date(date);
         vol = parseFloat(vol);
         cost = parseFloat(cost);
         const snapshot = await findOneAsset(userId, name, type);
@@ -48,8 +48,8 @@ module.exports ={
         }
         
     },
-    sellAsset: async (userId, name, vol, type, amount)=> {
-        let d = new Date();
+    sellAsset: async (userId, name, vol, type, amount, date)=> {
+        let d = new Date(date);
         vol = parseFloat(vol);
         amount = parseFloat(amount);
         const snapshot = await findOneAsset(userId, name, type);
@@ -70,8 +70,8 @@ module.exports ={
             
         }
     },
-    assetDividend: async (userId, name, vol, type, amount)=> {
-        let d = new Date();
+    assetDividend: async (userId, name, vol, type, amount, date)=> {
+        let d = new Date(date);
         vol = parseFloat(vol);
         amount = parseFloat(amount);
         const snapshot = await findOneAsset(userId, name, type);

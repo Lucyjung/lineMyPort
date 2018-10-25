@@ -101,8 +101,8 @@ module.exports = {
             status: false,
             msg: ''
         };
-        if (request.params.user && request.payload.symbol && request.payload.volume && request.payload.type && request.payload.cost){
-            await Asset.buyAsset(request.params.user, request.payload.symbol, request.payload.volume,request.payload.type, request.payload.cost);
+        if (request.params.user && request.payload.symbol && request.payload.volume && request.payload.type && request.payload.amount && request.payload.date){
+            await Asset.buyAsset(request.params.user, request.payload.symbol, request.payload.volume,request.payload.type, request.payload.amount, request.payload.date);
             returnMsg.status = true;
             returnMsg.msg = 'Success';
         }else{
@@ -116,8 +116,8 @@ module.exports = {
             status: false,
             msg: ''
         };
-        if (request.params.user && request.payload.symbol && request.payload.volume && request.payload.type && request.payload.amount){
-            await Asset.sellAsset(request.params.user, request.payload.symbol, request.payload.volume,request.payload.type, request.payload.amount);
+        if (request.params.user && request.payload.symbol && request.payload.volume && request.payload.type && request.payload.amount  && request.payload.date){
+            await Asset.sellAsset(request.params.user, request.payload.symbol, request.payload.volume,request.payload.type, request.payload.amount, request.payload.date);
             returnMsg.status = true;
             returnMsg.msg = 'Success';
         }else{
@@ -131,8 +131,8 @@ module.exports = {
             status: false,
             msg: ''
         };
-        if (request.params.user && request.payload.symbol && request.payload.volume && request.payload.type && request.payload.amount){
-            await Asset.assetDividend(request.params.user, request.payload.symbol, request.payload.volume,request.payload.type, request.payload.amount);
+        if (request.params.user && request.payload.symbol && request.payload.volume && request.payload.type && request.payload.amount  && request.payload.date){
+            await Asset.assetDividend(request.params.user, request.payload.symbol, request.payload.volume,request.payload.type, request.payload.amount , request.payload.date);
             returnMsg.status = true;
             returnMsg.msg = 'Success';
         }else{
@@ -152,6 +152,19 @@ module.exports = {
             returnMsg.msg = 'Success';
         }else{
             returnMsg.msg = 'User Id & Payload required';
+        }
+        let response = h.response(returnMsg);
+        return response;
+    },
+    isSupportStock:  async (request, h) => {
+        let returnMsg = {
+            status: false,
+        };
+        if (request.params.name){
+            let price = await YahooFin.getPrice(request.params.name);
+            if (price){
+                returnMsg.status = true;
+            }
         }
         let response = h.response(returnMsg);
         return response;

@@ -1,3 +1,7 @@
 .btn-tran{
     background: transparent
 }
+tr .align-me {
+    display: flex;
+    align-items: center;
+  }

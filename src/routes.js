@@ -42,4 +42,12 @@ module.exports =  [
         },
         handler: AssetController.updateAsset
     },
+    {
+        method: 'GET',
+        path: '/support/',
+        config: {
+            cors : true,
+        },
+        handler: AssetController.isSupportStock
+    },
 ];
