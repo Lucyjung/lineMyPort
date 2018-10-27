@@ -36,49 +36,29 @@ function getFundNav(symbols, subtract_day){
         let d= moment().subtract(subtract_day, 'days').add(543,'year').format('DD/MM/YYYY');
         
         http.get('http://www.thaimutualfund.com/AIMC/aimc_navCenterDownloadRepRep.jsp?date='+d, function(response){
-            response.pipe(file);
-            const readline = require('readline');
-            const rl = readline.createInterface({
-                input: fs.createReadStream(FILE_NAME),
-                crlfDelay: Infinity
-            });
-            let result = {};
-            rl.on('line', (line) => {
-                
-                if (line != ''){
-                    line = line.replace(new RegExp('"', 'g'), '');
-                    let dataArr = line.split(',');
-                    console.log( dataArr[6] + ':' + dataArr[8])
-                    if (symbols.indexOf(dataArr[6]) > -1){
-                        result[dataArr[6]] = dataArr[8];
+            let stream = response.pipe(file);
+            stream.on('finish',  ()=> { 
+                const readline = require('readline');
+                const rl = readline.createInterface({
+                    input: fs.createReadStream(FILE_NAME),
+                    crlfDelay: Infinity
+                });
+                let result = {};
+                rl.on('line', (line) => {
+                    
+                    if (line != ''){
+                        line = line.replace(new RegExp('"', 'g'), '');
+                        let dataArr = line.split(',');
+                        if (symbols.indexOf(dataArr[6]) > -1){
+                            result[dataArr[6]] = dataArr[8];
+                        }
                     }
-                }
-            }).on('close', () => {
-                fulfilled(result);
+                }).on('close', () => {
+                    fulfilled(result);
+                });
             });
-            // let result = {};
-            // let stream = fs.createReadStream(FILE_NAME);
-            // let csvStream = csv()
-            //     .on('data', (data) =>{
-            //         console.log(data)
-            //         if (data.length > 0){
-            //             if (symbols.indexOf(data[6]) > -1){
-            //                 result[data[6]] = data[8];
-            //             }
-            //         }
-        
-            //     })
-            //     .on('error', function(error){
-            //         console.log('error')
-            //         console.log(error)
-            //         fulfilled(null);
-            //     })
-            //     .on('end', function(){
-            //         console.log(result)
-            //         fulfilled(result);
-            //     });
-                
-            // stream.pipe(csvStream);
+            
+
         });
          
         
