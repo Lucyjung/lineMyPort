@@ -3,7 +3,7 @@ import ActionModal from '../components/ActionModal';
 import Table from '../components/Table';
 import Button from '../components/LargeButton';
 import moment from 'moment';
-const BACKEND_API_URL = 'http://localhost';// 'https://lineportfolio.herokuapp.com'
+const BACKEND_API_URL = 'https://lineportfolio.herokuapp.com';
 class MainContainer extends Component{
     constructor(props, context) {
         super(props, context);
