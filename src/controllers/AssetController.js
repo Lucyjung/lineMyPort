@@ -37,7 +37,6 @@ module.exports = {
             if (list.fund.length > 0){
                 fundNav = await Fund.getPrice(list.fund);
             }
-
             for (let i  in list.asset){
 
                 summary.totalCost += list.asset[i].cost;

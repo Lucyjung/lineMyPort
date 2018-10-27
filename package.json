@@ -15,7 +15,6 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.18.0",
-    "fast-csv": "^2.4.1",
     "firebase-admin": "^6.0.0",
     "hapi": "^17.6.0",
     "moment": "^2.22.2",
