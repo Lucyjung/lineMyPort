@@ -27,6 +27,7 @@ function getFundNav(symbols, subtract_day){
 
     return new Promise((fulfilled) => { 
         let fs = require('fs');
+
         let http = require('http');
         let file = fs.createWriteStream(FILE_NAME);
 
@@ -34,6 +35,7 @@ function getFundNav(symbols, subtract_day){
         let moment = require('moment');
         let d= moment().subtract(subtract_day, 'days').add(543,'year').format('DD/MM/YYYY');
         
+        console.log(d);
         http.get('http://www.thaimutualfund.com/AIMC/aimc_navCenterDownloadRepRep.jsp?date='+d, function(response){
             response.pipe(file);
             const readline = require('readline');
@@ -53,9 +55,32 @@ function getFundNav(symbols, subtract_day){
                     }
                 }
             }).on('close', () => {
-                
+                console.log(result)
                 fulfilled(result);
             });
+            // let result = {};
+            // let stream = fs.createReadStream(FILE_NAME);
+            // let csvStream = csv()
+            //     .on('data', (data) =>{
+            //         console.log(data)
+            //         if (data.length > 0){
+            //             if (symbols.indexOf(data[6]) > -1){
+            //                 result[data[6]] = data[8];
+            //             }
+            //         }
+        
+            //     })
+            //     .on('error', function(error){
+            //         console.log('error')
+            //         console.log(error)
+            //         fulfilled(null);
+            //     })
+            //     .on('end', function(){
+            //         console.log(result)
+            //         fulfilled(result);
+            //     });
+                
+            // stream.pipe(csvStream);
         });
          
         
