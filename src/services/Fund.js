@@ -35,7 +35,6 @@ function getFundNav(symbols, subtract_day){
         let moment = require('moment');
         let d= moment().subtract(subtract_day, 'days').add(543,'year').format('DD/MM/YYYY');
         
-        console.log(d);
         http.get('http://www.thaimutualfund.com/AIMC/aimc_navCenterDownloadRepRep.jsp?date='+d, function(response){
             response.pipe(file);
             const readline = require('readline');
@@ -49,13 +48,12 @@ function getFundNav(symbols, subtract_day){
                 if (line != ''){
                     line = line.replace(new RegExp('"', 'g'), '');
                     let dataArr = line.split(',');
-                    
+                    console.log( dataArr[6] + ':' + dataArr[8])
                     if (symbols.indexOf(dataArr[6]) > -1){
                         result[dataArr[6]] = dataArr[8];
                     }
                 }
             }).on('close', () => {
-                console.log(result)
                 fulfilled(result);
             });
             // let result = {};
