@@ -2,12 +2,16 @@ import React, { Component } from 'react';
 import ActionModal from '../components/ActionModal';
 import Table from '../components/Table';
 import Button from '../components/LargeButton';
+import PlainTable from '../components/PlainTable';
 import moment from 'moment';
+
+const liff = window.liff; 
 const BACKEND_API_URL = 'https://lineportfolio.herokuapp.com';
 class MainContainer extends Component{
     constructor(props, context) {
         super(props, context);
     
+        this.initialize = this.initialize.bind(this);
         this.handleModalSubmit = this.handleModalSubmit.bind(this);
         this.handleModalClose = this.handleModalClose.bind(this);
         this.handleTableButtonClick = this.handleTableButtonClick.bind(this);
@@ -29,13 +33,33 @@ class MainContainer extends Component{
             volume: 0,
             amount: 0,
             date: moment().format('DD/MM/YYYY'),
-            user: 'U28bae1ada29dcce79109253c7083afd3'
+            user: '',
+            isExist: false,
+            warningMsg: '',
+            sumHeader: ['Total', 'Value'],
+            sumData: {}
         };
     }
-    async componentDidMount() {
+    async initialize() {
+        await liff.init(async () => {
+            let profile = await liff.getProfile();
+            this.setState({
+                user : profile.userId
+            });
+        }); 
+    }
+    async getPortData(){
         let response = await fetch(BACKEND_API_URL + '/portfolio/' + this.state.user);
         let json = await response.json();
-        this.setState({ data: json.data });
+        this.setState({ 
+            data: json.data,
+            sumData: json.summary
+        });
+        return json;
+    }
+    async componentDidMount() {
+        window.addEventListener('load', this.initialize);
+        await this.getPortData();
     }
     handleTableButtonClick(e, props){
         
@@ -43,17 +67,27 @@ class MainContainer extends Component{
             symbol: props.original.symbol,
             type: props.original.type,
             volume: props.original.volume,
-            amount: props.original.amount,
-            show: true
+            amount: props.original.cost,
+            show: true,
+            isExist: true
         }));
+
+        if (props.original.type == 'Cash'){
+            this.setState(() => ({
+                action: 'update'
+            }));
+        }
     }
     handleMainButtonClick(){
         this.setState(() => ({
             symbol: '',
-            type: '',
+            type: 'Stock',
+            action: 'buy',
             volume: 0,
             amount: 0,
-            show: true
+            show: true,
+            date: moment().format('DD/MM/YYYY'),
+            isExist: false
         }));
     }
     async handleModalSubmit(){
@@ -66,8 +100,8 @@ class MainContainer extends Component{
             }
         }
         let volume = parseFloat(this.state.volume);
-        let amount = parseFloat(this.state.volume);
-        if (!isNaN(volume) || !isNaN(amount)){
+        let amount = parseFloat(this.state.amount);
+        if (isNaN(volume) || isNaN(amount)){
             isValidate = false;
         }
         if (isValidate){
@@ -78,7 +112,7 @@ class MainContainer extends Component{
                 'amount': this.state.amount,
                 'date': this.state.date
             };
-            fetch(BACKEND_API_URL + '/portfolio/' + this.state.action + '/' + this.state.user, {
+            let response = await fetch(BACKEND_API_URL + '/portfolio/' + this.state.action + '/' + this.state.user, {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
@@ -86,15 +120,33 @@ class MainContainer extends Component{
                 },
                 body:  JSON.stringify(data)
             });
+            let json = await response.json();
+            if (json.status){
+                await this.getPortData();
+                this.setState({ 
+                    show: false
+                });
+            }
+            else{
+                this.setState({ 
+                    warningMsg: json.msg
+                });
+            }
+            
         }
-
-        this.setState({ show: false });
+        else{
+            this.setState({ 
+                warningMsg:  this.state.symbol + ' Not Support'
+            });
+           
+        }
+        
     }
     handleModalClose(){
         this.setState({ show: false });
     }
-    handleActionChange(e){
-        this.setState({action : e.target.value});
+    handleActionChange(action){
+        this.setState({action : action.toLowerCase()});
     }
     handleSymbolChange(e){
         this.setState({symbol : e.target.value});
@@ -103,17 +155,18 @@ class MainContainer extends Component{
         this.setState({type : type});
     }
     handleVolChange(e){
-        this.setState({volume : e.target.volume});
+        let vol = e.target.value.replace(new RegExp(',', 'g'), '');
+        this.setState({volume : vol});
     }
     handleAmountChange(e){
-        this.setState({amount : e.target.amount});
+        let amount = e.target.value.replace(new RegExp(',', 'g'), '');
+        this.setState({amount : amount});
     }
     handleDateChange(e){
-        this.setState({date : e.target.date});
+        this.setState({date : e.target.value});
     }
 
     render() {
-        
         
         return (
             <div>
@@ -127,12 +180,15 @@ class MainContainer extends Component{
                     volume = {this.state.volume}
                     amount = {this.state.amount}
                     date = {this.state.date}
+                    action = {this.state.action}
                     onGrpChange = {this.handleActionChange}
                     onSymbolChange = {this.handleSymbolChange}
                     onTypeChange = {this.handleTypeChange}
                     onVolChange = {this.handleVolChange}
                     onAmountChange = {this.handleAmountChange}
                     onDateChange = {this.handleDateChange}
+                    isExist = {this.state.isExist}
+                    warningMsg = {this.state.warningMsg}
                 />
                 <Button 
                     onSubmit={this.handleMainButtonClick} 
@@ -141,6 +197,10 @@ class MainContainer extends Component{
                 <Table 
                     data={this.state.data}
                     onAction={this.handleTableButtonClick}
+                />
+                <PlainTable 
+                    header={this.state.sumHeader}
+                    data={this.state.sumData}
                 />
             </div>
         );

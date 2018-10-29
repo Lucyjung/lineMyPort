@@ -159,8 +159,8 @@ module.exports = {
         let returnMsg = {
             status: false,
         };
-        if (request.params.name){
-            let price = await YahooFin.getPrice(request.params.name);
+        if (request.query.name){
+            let price = await YahooFin.getPrice(request.query.name);
             if (price){
                 returnMsg.status = true;
             }
@@ -182,6 +182,7 @@ function getAssetList(assetSnap){
                 cost: asset.data().cost,
                 volume: asset.data().volume,
                 PL: asset.data().cost,
+                history: asset.data().history,
                 marketPrice: 0
             };
             if (asset.data().volume > 0){

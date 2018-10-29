@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-
+import { Link} from 'react-router-dom';
 import ReactTable from 'react-table';
 import PropTypes from 'prop-types'; // ES6
 
@@ -10,7 +10,7 @@ class Table extends Component{
         
         const columns = [{
             Header: 'Symbol',
-            accessor: 'symbol' // String-based value accessors!
+            Cell: props => <Link to={{ pathname: '/history', state: { data: props.original.history, name: props.original.symbol} }}>{props.original.symbol}</Link> // Custom cell components!
         }, {
             Header: 'Type',
             accessor: 'type',

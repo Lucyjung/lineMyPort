@@ -1,5 +1,5 @@
 var admin = require('firebase-admin');
-
+const moment = require('moment');
 var serviceAccount = require('./firebasecert.json');
 serviceAccount['project_id'] = process.env.FB_PROJECT_ID ;
 serviceAccount['private_key_id'] = process.env.FB_PRIVATE_ID ;
@@ -17,7 +17,7 @@ const ACTION_DIVIDEND = 'DIVIDEND';
 // [START asset API]
 module.exports ={
     buyAsset: async (userId, name, vol, type, cost, date) => {
-        let d = new Date(date);
+        let d = moment(date, 'DD/MM/YYYY');
         vol = parseFloat(vol);
         cost = parseFloat(cost);
         const snapshot = await findOneAsset(userId, name, type);
@@ -31,7 +31,7 @@ module.exports ={
             await snapshot.forEach(async (doc) => {
                 postData.cost = doc.data().cost + cost;
                 postData.volume = doc.data().volume + vol;
-                logHistory(ACTION_BUY, vol, cost, d.getTime(),doc.data().history,postData);
+                logHistory(ACTION_BUY, vol, cost, d.unix(),doc.data().history,postData);
                 await userAsset.doc(doc.id).set(postData);
             });
         }
@@ -49,7 +49,7 @@ module.exports ={
         
     },
     sellAsset: async (userId, name, vol, type, amount, date)=> {
-        let d = new Date(date);
+        let d = moment(date, 'DD/MM/YYYY');
         vol = parseFloat(vol);
         amount = parseFloat(amount);
         const snapshot = await findOneAsset(userId, name, type);
@@ -63,7 +63,7 @@ module.exports ={
             await snapshot.forEach(async (doc) => {
                 postData.cost = doc.data().cost - amount;
                 postData.volume = doc.data().volume - vol;
-                logHistory(ACTION_SELL, vol, amount, d.getTime(),doc.data().history,postData);
+                logHistory(ACTION_SELL, vol, amount, d.unix(),doc.data().history,postData);
                 await userAsset.doc(doc.id).set(postData);
             });
             
@@ -71,7 +71,7 @@ module.exports ={
         }
     },
     assetDividend: async (userId, name, vol, type, amount, date)=> {
-        let d = new Date(date);
+        let d = moment(date, 'DD/MM/YYYY');
         vol = parseFloat(vol);
         amount = parseFloat(amount);
         const snapshot = await findOneAsset(userId, name, type);
@@ -87,7 +87,7 @@ module.exports ={
                 if (vol != doc.data().volume){
                     postData.volume = vol;
                 }
-                logHistory(ACTION_DIVIDEND, vol, amount, d.getTime(),doc.data().history,postData);
+                logHistory(ACTION_DIVIDEND, vol, amount, d.unix(),doc.data().history,postData);
                 await userAsset.doc(doc.id).set(postData);
             });
             
@@ -103,7 +103,8 @@ module.exports ={
             postData = {
                 userId : userId,
                 name: name,
-                type: type
+                type: type,
+                volume: vol
             };
             await snapshot.forEach(async (doc) => {
                 postData.cost = amount;
@@ -143,7 +144,7 @@ function logHistory(action, volume , amount, time, pre_hist, postData){
         action: action,
         volume: volume,
         amount: amount,
-        time: time
+        date: time
     });
     postData.history = history;
     return postData;
