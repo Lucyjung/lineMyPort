@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Table} from 'react-bootstrap';
 import {Pie} from 'react-chartjs';
 const liff = window.liff; 
 const BACKEND_API_URL = 'https://lineportfolio.herokuapp.com';
