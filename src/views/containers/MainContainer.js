@@ -40,12 +40,13 @@ class MainContainer extends Component{
             sumData: {}
         };
     }
-    async initialize() {
-        await liff.init(async () => {
+    initialize() {
+        liff.init(async () => {
             let profile = await liff.getProfile();
             this.setState({
                 user : profile.userId
             });
+            await this.getPortData();
         }); 
     }
     async getPortData(){
@@ -57,9 +58,9 @@ class MainContainer extends Component{
         });
         return json;
     }
-    async componentDidMount() {
+    componentDidMount() {
         window.addEventListener('load', this.initialize);
-        await this.getPortData();
+        
     }
     handleTableButtonClick(e, props){
         
