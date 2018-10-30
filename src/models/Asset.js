@@ -43,7 +43,7 @@ module.exports ={
                 cost: cost,
                 type: type,
             };
-            logHistory(ACTION_BUY, vol, cost, d.getTime(),[],postData);
+            logHistory(ACTION_BUY, vol, cost, d.valueOf(),[],postData);
             await userAsset.add(postData);
         }
         
@@ -63,7 +63,7 @@ module.exports ={
             await snapshot.forEach(async (doc) => {
                 postData.cost = doc.data().cost - amount;
                 postData.volume = doc.data().volume - vol;
-                logHistory(ACTION_SELL, vol, amount, d.unix(),doc.data().history,postData);
+                logHistory(ACTION_SELL, vol, amount, d.valueOf(),doc.data().history,postData);
                 await userAsset.doc(doc.id).set(postData);
             });
             
@@ -88,7 +88,7 @@ module.exports ={
                 if (vol != doc.data().volume){
                     postData.volume = vol;
                 }
-                logHistory(ACTION_DIVIDEND, vol, amount, d.unix(),doc.data().history,postData);
+                logHistory(ACTION_DIVIDEND, vol, amount, d.valueOf(),doc.data().history,postData);
                 await userAsset.doc(doc.id).set(postData);
             });
             
