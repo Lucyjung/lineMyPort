@@ -28,7 +28,7 @@ module.exports =  [
     },
     {
         method: 'POST',
-        path: '/portfolio/dividend{user?}',
+        path: '/portfolio/dividend/{user?}',
         config: {
             cors : true,
         },
