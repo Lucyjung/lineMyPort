@@ -80,7 +80,8 @@ module.exports ={
             postData = {
                 userId : userId,
                 name: name,
-                type: type
+                type: type,
+                volume: vol
             };
             await snapshot.forEach(async (doc) => {
                 postData.cost = doc.data().cost - amount;
