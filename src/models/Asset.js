@@ -31,7 +31,7 @@ module.exports ={
             await snapshot.forEach(async (doc) => {
                 postData.cost = doc.data().cost + cost;
                 postData.volume = doc.data().volume + vol;
-                logHistory(ACTION_BUY, vol, cost, d.unix(),doc.data().history,postData);
+                logHistory(ACTION_BUY, vol, cost, d.valueOf(),doc.data().history,postData);
                 await userAsset.doc(doc.id).set(postData);
             });
         }
