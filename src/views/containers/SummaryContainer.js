@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
 import {Pie} from 'react-chartjs';
-const liff = window.liff; 
-const BACKEND_API_URL = 'https://lineportfolio.herokuapp.com';
 import PlainTable from '../components/PlainTable';
+
+import config from '../config/interface';
+const BACKEND_API_URL = config.backendURL;
+
+const liff = window.liff; 
 
 class SummaryContainer extends Component{
     constructor(props, context) {
@@ -27,7 +30,6 @@ class SummaryContainer extends Component{
             });
             await this.getPortData();
         }); 
-        
     }
     async componentDidMount() {
         window.addEventListener('load', this.initialize);

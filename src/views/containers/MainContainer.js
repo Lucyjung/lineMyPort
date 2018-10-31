@@ -4,9 +4,12 @@ import Table from '../components/Table';
 import Button from '../components/LargeButton';
 import PlainTable from '../components/PlainTable';
 import moment from 'moment';
+import { Col, Row} from 'react-bootstrap';
+import config from '../config/interface';
 
+const BACKEND_API_URL = config.backendURL;
 const liff = window.liff; 
-const BACKEND_API_URL = 'https://lineportfolio.herokuapp.com';
+
 class MainContainer extends Component{
     constructor(props, context) {
         super(props, context);
