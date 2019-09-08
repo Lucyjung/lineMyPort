@@ -8,14 +8,20 @@ admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     databaseURL: process.env.FBDB_URL
 });
-var db = admin.firestore();
-var userAsset = db.collection('user-asset');
+const settings = {timestampsInSnapshots: true};
+admin.firestore().settings(settings);
+var userAsset = admin.firestore().collection('user-asset');
 
 const ACTION_BUY = 'BUY';
 const ACTION_SELL = 'SELL';
 const ACTION_DIVIDEND = 'DIVIDEND';
 // [START asset API]
 module.exports ={
+    action : {
+        buy : ACTION_BUY,
+        sell : ACTION_SELL,
+        dividend: ACTION_DIVIDEND
+    },
     buyAsset: async (userId, name, vol, type, cost, date) => {
         let d = moment(date, 'DD/MM/YYYY');
         vol = parseFloat(vol);

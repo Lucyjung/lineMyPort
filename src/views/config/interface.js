@@ -1,5 +1,5 @@
 const config = {
-    backendURL : 'https://lineportfolio.herokuapp.com'
+    backendURL :'https://lineport2.herokuapp.com'
 };
 
 export default config;

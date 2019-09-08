@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Pie} from 'react-chartjs';
+import {Pie, Bar} from 'react-chartjs';
 import PlainTable from '../components/PlainTable';
 
 import config from '../config/interface';
@@ -16,8 +16,27 @@ class SummaryContainer extends Component{
                 animateRotate : true ,
                 animateScale: true,
             },
+            barOptions: {
+                responsive: true,
+                legend: {
+                    position: 'top'
+                },
+                title: {
+                    display: true,
+                    text: 'Dividend Chat'
+                }
+            },
             sumHeader: ['Total', 'Value'],
-            sumData: {}
+            sumData: {},
+            dividendChartData : {labels : [] , datasets : [
+                {
+                    label: 'Dividend',
+                    data: []
+                }]},
+            dividendHeader: ['Year', 'Dividend'],
+            dividendData : {},
+            profitHeader : ['Symbol', 'Profit/Loss'],
+            profitData : {}
         };
         this.initialize = this.initialize.bind(this);
     }
@@ -30,6 +49,8 @@ class SummaryContainer extends Component{
             });
             await this.getPortData();
         }); 
+        this.getPortData();
+        
     }
     async componentDidMount() {
         window.addEventListener('load', this.initialize);
@@ -39,6 +60,14 @@ class SummaryContainer extends Component{
         let response = await fetch(BACKEND_API_URL + '/portfolio/' + this.state.user);
         let json = await response.json();
         let chartData = [];
+        let dividendData = {};
+        let profitData = {};
+        let dividendChartData = {labels : [] , datasets : [
+            {
+                label: 'Dividend',
+                backgroundColor: 'rgba(0,0,205,0.5)',
+                data: []
+            }]};
         for (let key in json.summary){
             if (key.toUpperCase() == 'CASH'){
                 chartData.push({
@@ -73,20 +102,47 @@ class SummaryContainer extends Component{
                 });
             }
         }
+
+        for (let key in json.dividendList){
+            dividendChartData.labels.push(key);
+            dividendChartData.datasets[0].data.push(json.dividendList[key].amount);
+            dividendData[key] = json.dividendList[key].amount;
+        }
+
+        for (let key in json.profit){
+            profitData[json.profit[key].symbol] = json.profit[key].profit;
+        }
         this.setState({ 
             sumData: json.summary,
-            chartData: chartData
+            chartData: chartData,
+            dividendChartData: dividendChartData,
+            dividendData: dividendData,
+            profitData: profitData
         });
-        return json;
     }
     render() {
         
         return (
             <div>
+                <h2> Asset Summary </h2>
                 <Pie data={this.state.chartData} options={this.state.chartOptions} width="600" height="250"/>
                 <PlainTable 
                     header={this.state.sumHeader}
                     data={this.state.sumData}
+                />
+                <hr />
+                
+                <h2> Dividend Summary </h2>
+                <Bar data={this.state.dividendChartData} options={this.state.barOptions} width="600" height="250"/>
+                <PlainTable 
+                    header={this.state.dividendHeader}
+                    data={this.state.dividendData}
+                />
+                <hr />
+                <h2> Profit/Loss Summary </h2>
+                <PlainTable 
+                    header={this.state.profitHeader}
+                    data={this.state.profitData}
                 />
             </div>
         );

@@ -1,7 +1,9 @@
 const Asset = require('../models/Asset');
 const Fund = require('../services/Fund');
 const YahooFin = require('../services/YahooFinance');
-
+const CASH = 'CASH';
+const STOCK = 'STOCK';
+const FUND = 'FUND';
 module.exports = {
     // ********************************************//
     // Name: getAsset
@@ -47,6 +49,9 @@ module.exports = {
                 }else if (fundNav && fundNav[list.asset[i].symbol] ){
                     price = fundNav[list.asset[i].symbol];
                 }
+                else if (list.asset[i].type.toUpperCase() == CASH){
+                    price = list.asset[i].cost;
+                }
                 if (!price){
                     price = 0;
                 }
@@ -62,23 +67,18 @@ module.exports = {
                 list.asset[i].avgCost = parseFloat(list.asset[i].avgCost).toFixed(2);
                 if (price > 0 ){
                     summary.totalMarket += list.asset[i].volume * price;
-                    if (list.asset[i].type == 'Stock'){
+                    if (list.asset[i].type.toUpperCase() == STOCK){
                         summary.stock += list.asset[i].volume * price;
                     }
-                    else if (list.asset[i].type == 'Fund'){
+                    else if (list.asset[i].type.toUpperCase() == FUND){
                         summary.fund += list.asset[i].volume * price;
                     }
-
+                    else if (list.asset[i].type.toUpperCase() == CASH){
+                        summary.cash += list.asset[i].volume * price;
+                    }
                 }
                 else{
-                    
-                    if (list.asset[i].type == 'Cash'){
-                        summary.cash += parseFloat(list.asset[i].cost);
-                        summary.totalMarket += parseFloat(list.asset[i].cost);
-                    }
-                    else{
-                        summary.unknown += parseFloat(list.asset[i].cost);
-                    }
+                    summary.unknown += parseFloat(list.asset[i].cost);
                 }
             }
 
@@ -87,6 +87,7 @@ module.exports = {
             returnMsg.data = list.asset;
             returnMsg.summary = summary;
             returnMsg.profit = list.profit;
+            returnMsg.dividendList = list.dividendList;
         }
         else{
             returnMsg.msg = 'User Id required';
@@ -175,6 +176,7 @@ function getAssetList(assetSnap){
         let fundList = [];
         let stockList = [];
         let profitList = [];
+        let dividendList = {};
         assetSnap.forEach( (asset) => {
             let assetInfo = {
                 symbol: asset.data().name,
@@ -187,10 +189,10 @@ function getAssetList(assetSnap){
             };
             if (asset.data().volume > 0){
                 assetInfo.avgCost = asset.data().cost/asset.data().volume;
-                if (asset.data().type == 'Stock'){
+                if (asset.data().type.toUpperCase() == STOCK){
                     stockList.push(asset.data().name);
                 }
-                else if (asset.data().type == 'Fund'){
+                else if (asset.data().type.toUpperCase() == FUND){
                     fundList.push(asset.data().name);
                 }
                 assetList.push(assetInfo);
@@ -199,18 +201,42 @@ function getAssetList(assetSnap){
                 let history = asset.data().history;
                 let profit = 0.0;
                 for (let i in history){
-                    if (history[i].action == 'Buy'){
+                    if (history[i].action.toUpperCase() == Asset.action.buy){
                         profit -= history[i].amount;
                     }
-                    else if (history[i].action == 'Sell' || history[i].action == 'Dividend'){
+                    else if (history[i].action.toUpperCase() == Asset.action.sell 
+                            || history[i].action.toUpperCase() == Asset.action.dividend){
                         profit += history[i].amount;
                     }
                 }
                 profitList.push({symbol: asset.data().name, profit: profit.toFixed(2)});
             }
-            
+            // get Dividend list
+            let histories = asset.data().history;
+            for (let iHist in histories){
+                if (assetInfo.type.toUpperCase() != CASH &&
+                  histories[iHist].action.toUpperCase() == Asset.action.dividend){
+                    let date = new Date(histories[iHist].date);
+                    let year = date.getFullYear();
+                    if (dividendList[year]){
+                        dividendList[year].amount += histories[iHist].amount;
+                        if (dividendList[year].detail[assetInfo.symbol]){
+                            dividendList[year].detail[assetInfo.symbol] += histories[iHist].amount;
+                        }
+                        else{
+                            dividendList[year].detail[assetInfo.symbol] = histories[iHist].amount;
+                        }
+                    }
+                    else{
+                        dividendList[year] = {};
+                        dividendList[year].amount = histories[iHist].amount;
+                        dividendList[year].detail = {};
+                        dividendList[year].detail[assetInfo.symbol] = histories[iHist].amount;
+                    }
+                }
+            }
         });
-        fulfilled({fund: fundList, asset: assetList, stock: stockList, profit: profitList});
+        fulfilled({fund: fundList, asset: assetList, stock: stockList, profit: profitList, dividendList: dividendList});
     });
     
 }
