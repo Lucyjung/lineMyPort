@@ -110,7 +110,13 @@ class SummaryContainer extends Component{
         }
 
         for (let key in json.profit){
-            profitData[json.profit[key].symbol] = json.profit[key].profit;
+            if (profitData[json.profit[key].symbol]){
+                profitData[json.profit[key].symbol] += json.profit[key].profit;
+            }
+            else{
+                profitData[json.profit[key].symbol] = json.profit[key].profit;
+            }
+            
         }
         this.setState({ 
             sumData: json.summary,
