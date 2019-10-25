@@ -29,35 +29,28 @@ async function getFund(symbols, subtract_day) {
     let fundData = {};
     const response = await axios.get('https://www.thaimutualfund.com/AIMC/aimc_navCenterDownloadRepRep.jsp?date=' + d);
     if (response && response.data){
-        let data = response.data.split('\r\n');
+        let data = response.data.split('\n');
         
         for (let i in data){
             if (data[i] && data[i] != ''){
                 let tmpData = data[i].split(',');
                 if (tmpData.length > 1){
-                    fundData = searchFundNav(symbols, tmpData);
+                    searchFundNav(symbols, tmpData, fundData);
                 }
             }
         }
     }
     return fundData;    
 }
-function searchFundNav(symbols, fundRawArr){
-    let result = {};
-    const ROW_SIZE = 12;
-    let colSize = Math.floor(fundRawArr.length / ROW_SIZE);
-    for (let col = 0 ; col < colSize; col++){
-        if (!fundRawArr[(col * ROW_SIZE) + 6]){
-            break;
-        }
-        let fundName = fundRawArr[(col * ROW_SIZE) + 6];
+function searchFundNav(symbols, fundRawArr, result){
+
+    if (fundRawArr[6]){
+        let fundName = fundRawArr[6];
         fundName = fundName.replace(new RegExp('"', 'g'), '');
         if (symbols.indexOf(fundName) > -1){
-            let nav = fundRawArr[(col * ROW_SIZE) + 8];
+            let nav = fundRawArr[8];
             nav = nav.replace(new RegExp('"', 'g'), '');
             result[fundName] = nav;
         }
-
     }
-    return result ;
 }
