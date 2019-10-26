@@ -1,0 +1,6 @@
+runtime: nodejs10
+env_variables:
+  FB_CLIENT_EMAIL: "firebase-adminsdk-4h3lp@fir-1-4004c.iam.gserviceaccount.com"
+  FBDB_URL: 'https://fir-1-4004c.firebaseio.com'
+  FB_PRIVATE_ID: '5a73a43c715aa4b161a1f51830457269afc1d2d5'
+  FB_PROJECT_ID: 'fir-1-4004c'

@@ -1,7 +1,16 @@
 const AssetController = require('./controllers/AssetController');
 
 module.exports =  [
-
+    {
+        method: 'GET',
+        path: '/',
+        config: {
+            cors : true,
+        },
+        handler: () => {
+            return 'Hello World!';
+        }
+    },
     {
         method: 'GET',
         path: '/portfolio/{user?}',
