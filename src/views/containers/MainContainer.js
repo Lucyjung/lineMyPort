@@ -63,11 +63,22 @@ class MainContainer extends Component{
     async getPortData(){
         let response = await fetch(BACKEND_API_URL + '/portfolio/' + this.state.user);
         let json = await response.json();
+        const formatedData = json.data.map(el => {
+            el.cost = this.numberWithCommas(el.cost);
+            el.PL = this.numberWithCommas(el.PL);
+            el.avgCost = this.numberWithCommas(el.avgCost);
+        });
+        for (let i in json.summary){
+            json.summary[i] = this.numberWithCommas(json.summary[i]);
+        }
         this.setState({ 
-            data: json.data,
+            data: formatedData,
             sumData: json.summary
         });
         return json;
+    }
+    numberWithCommas(num , digit=2) {
+        return num.toFixed(digit).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     }
     componentDidMount() {
         window.addEventListener('load', this.initialize);
