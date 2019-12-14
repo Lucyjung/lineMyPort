@@ -63,16 +63,12 @@ class MainContainer extends Component{
     async getPortData(){
         let response = await fetch(BACKEND_API_URL + '/portfolio/' + this.state.user);
         let json = await response.json();
-        const formatedData = json.data.map(el => {
-            el.cost = this.numberWithCommas(el.cost);
-            el.PL = this.numberWithCommas(el.PL);
-            el.avgCost = this.numberWithCommas(el.avgCost);
-        });
+
         for (let i in json.summary){
             json.summary[i] = this.numberWithCommas(json.summary[i]);
         }
         this.setState({ 
-            data: formatedData,
+            data: json.data,
             sumData: json.summary
         });
         return json;

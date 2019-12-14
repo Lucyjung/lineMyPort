@@ -39,7 +39,7 @@ module.exports = {
             for (let i  in list.asset){
 
                 summary.totalCost += list.asset[i].cost;
-
+                
                 if (list.asset[i].marketPrice > 0 ){
                     summary.totalMarket += list.asset[i].volume * list.asset[i].marketPrice;
                     if (list.asset[i].type.toUpperCase() == STOCK){
@@ -55,6 +55,9 @@ module.exports = {
                 else{
                     summary.unknown += parseFloat(list.asset[i].cost);
                 }
+                list.asset[i].cost = numberWithCommas(list.asset[i].cost);
+                list.asset[i].PL = numberWithCommas(list.asset[i].PL);
+                list.asset[i].avgCost = numberWithCommas(list.asset[i].avgCost);
             }
 
             returnMsg.status = true;
@@ -276,4 +279,7 @@ async function getAssetPrice(list) {
         
     }
     return list;
+}
+function numberWithCommas(num , digit=2) {
+    return num.toFixed(digit).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
