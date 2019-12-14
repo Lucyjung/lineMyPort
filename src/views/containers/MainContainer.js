@@ -74,7 +74,7 @@ class MainContainer extends Component{
         return json;
     }
     numberWithCommas(num , digit=2) {
-        return num.toFixed(digit).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        return Number(num).toFixed(digit).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     }
     componentDidMount() {
         window.addEventListener('load', this.initialize);
