@@ -60,7 +60,7 @@ module.exports =  [
         handler: AssetController.isSupportStock
     },
     {
-        method: 'GET',
+        method: 'POST',
         path: '/addHistory/{user?}',
         config: {
             cors : true,
