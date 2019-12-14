@@ -42,14 +42,21 @@ class SummaryContainer extends Component{
     }
     initialize() {
         
-        liff.init(async () => {
-            let profile = await liff.getProfile();
-            this.setState({
-                user : profile.userId
-            });
-            await this.getPortData();
-        }); 
-        this.getPortData();
+        liff.init({
+            liffId: '1616862554-QW5w1AMP' // use own liffId
+        }).then(async () => {
+            if (!liff.isLoggedIn()) {
+                liff.login();
+                return;
+            }
+            else{
+                let profile = await liff.getProfile();
+                this.setState({
+                    user : profile.userId
+                });
+                await this.getPortData();
+            }
+        });
         
     }
     async componentDidMount() {

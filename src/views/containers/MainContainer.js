@@ -44,13 +44,21 @@ class MainContainer extends Component{
         };
     }
     initialize() {
-        liff.init(async () => {
-            let profile = await liff.getProfile();
-            this.setState({
-                user : profile.userId
-            });
-            await this.getPortData();
-        }); 
+        liff.init({
+            liffId: '1616862554-rakYPojA' // use own liffId
+        }).then(async () => {
+            if (!liff.isLoggedIn()) {
+                liff.login();
+                return;
+            }
+            else{
+                let profile = await liff.getProfile();
+                this.setState({
+                    user : profile.userId
+                });
+                await this.getPortData();
+            }
+        });
     }
     async getPortData(){
         let response = await fetch(BACKEND_API_URL + '/portfolio/' + this.state.user);
