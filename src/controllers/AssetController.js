@@ -270,9 +270,9 @@ async function getAssetPrice(list) {
         else{
             list.asset[i].PL = 0;
         }
-        list.asset[i].cost = parseFloat(list.asset[i].cost).toFixed(2);
-        list.asset[i].PL = parseFloat(list.asset[i].PL).toFixed(2);
-        list.asset[i].avgCost = parseFloat(list.asset[i].avgCost).toFixed(2);
+        list.asset[i].cost = parseFloat(list.asset[i].cost);
+        list.asset[i].PL = parseFloat(list.asset[i].PL);
+        list.asset[i].avgCost = parseFloat(list.asset[i].avgCost);
         
     }
     return list;
