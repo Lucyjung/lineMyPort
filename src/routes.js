@@ -59,4 +59,12 @@ module.exports =  [
         },
         handler: AssetController.isSupportStock
     },
+    {
+        method: 'POST',
+        path: '/addHistory/{user?}',
+        config: {
+            cors : true,
+        },
+        handler: AssetController.addAssetHistory
+    },
 ];

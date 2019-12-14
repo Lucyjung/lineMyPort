@@ -11,6 +11,7 @@ admin.initializeApp({
 const settings = {timestampsInSnapshots: true};
 admin.firestore().settings(settings);
 var userAsset = admin.firestore().collection('user-asset');
+var userAssetHistory = admin.firestore().collection('user-asset-history');
 
 const ACTION_BUY = 'BUY';
 const ACTION_SELL = 'SELL';
@@ -143,6 +144,24 @@ module.exports ={
         }
         postData.history = newhist;
         await userAsset.add(postData);
+    },
+    addAssetHistory: async (userId, assetArr )=>{
+        const date = moment().format('YYYYMMDD');
+        const snapshot = await findAssetHistoryByDate(userId, date);
+        const postData = {
+            userId : userId,
+            date: date,
+            timestamp: moment().unix(),
+            asset: assetArr
+        };
+        if (snapshot.size == 0){
+            userAssetHistory.add(postData);
+        } else {
+            await snapshot.forEach(async (doc) => {
+                await userAssetHistory.doc(doc.id).set(postData);
+            });
+        }
+        
     }
 };
 function logHistory(action, volume , amount, time, pre_hist, postData){
@@ -162,6 +181,14 @@ async function findOneAsset(userId, name, type){
         .where('name', '==', name)
         .where('type', '==', type)
         .where('volume', '>', 0)
+        .limit(1)
+        .get();
+    return snapshot;
+}
+async function findAssetHistoryByDate(userId, date){
+    const snapshot = await userAssetHistory
+        .where('userId', '==', userId)
+        .where('date', '==', date)
         .limit(1)
         .get();
     return snapshot;
