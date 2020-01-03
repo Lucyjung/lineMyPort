@@ -174,6 +174,72 @@ module.exports = {
         let response = h.response(returnMsg);
         return response;
     },
+    assetHistory:  async (request, h) => {
+
+        let returnMsg = {
+            status: false,
+            msg: ''
+        };
+        if (request.params.user ){
+            const from = Number(request.query.from);
+            const to = Number(request.query.to);
+            if (!isNaN(from) && !isNaN(to)){
+                try {
+                    const historySnap = await Asset.getAssetHistory(request.params.user, from, to);
+                    const histories = [];
+                    historySnap.forEach( (snap) => {
+                        const assets = snap.data().asset;
+                        const market = {
+                            stock: 0,
+                            fund: 0,
+                            cash: 0,
+                            total : 0,
+                            unknown: 0
+                        };
+                        for (let asset of assets){
+                            let price = asset.volume * asset.marketPrice;
+                            if (typeof asset.marketPrice == 'object' && asset.marketPrice.raw){
+                                price = asset.volume * asset.marketPrice.raw;
+                            }
+                            if (!asset.marketPrice){
+                                price = asset.cost;
+                                market.unknown += price;
+                            }
+                            else if (asset.type.toUpperCase() == STOCK ) {
+                                market.stock +=  price;
+                            } else if (asset.type.toUpperCase() == FUND) {
+                                market.fund +=  price;
+                            } else if (asset.type.toUpperCase() == CASH) {
+                                market.cash +=  price;
+                            }
+                            market.total += price;
+                        }
+                        const hist = {
+                            market : market,
+                            date : snap.data().date,
+                            timestamp : snap.data().timestamp
+                        };
+                        histories.push(hist);
+                    });
+                    returnMsg.status = true;
+                    returnMsg.msg = 'Success';
+                    returnMsg.data = histories;
+                } catch (e){
+                    returnMsg.msg = e;
+                }
+                
+            } else {
+                returnMsg.msg = 'From, To required';
+            }
+            
+        }
+        else{
+            returnMsg.msg = 'User Id required';
+        }
+
+        let response = h.response(returnMsg);
+        return response;
+    },
 };
 function getAssetList(assetSnap){
     return new Promise((fulfilled)=> { 

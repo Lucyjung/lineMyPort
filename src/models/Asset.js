@@ -162,6 +162,11 @@ module.exports ={
             });
         }
         
+    },
+    getAssetHistory: async (userId, from , to )=>{
+        const snapshot = await findAssetHistoryByDateFromTo(userId, from, to);
+        return snapshot;
+        
     }
 };
 function logHistory(action, volume , amount, time, pre_hist, postData){
@@ -190,6 +195,15 @@ async function findAssetHistoryByDate(userId, date){
         .where('userId', '==', userId)
         .where('date', '==', date)
         .limit(1)
+        .get();
+    return snapshot;
+}
+async function findAssetHistoryByDateFromTo(userId, from ,to){
+    const snapshot = await userAssetHistory
+        .where('userId', '==', userId)
+        .where('timestamp', '>=', from)
+        .where('timestamp', '<=', to)
+        .orderBy('timestamp', 'asc')
         .get();
     return snapshot;
 }

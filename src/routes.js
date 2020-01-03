@@ -67,4 +67,12 @@ module.exports =  [
         },
         handler: AssetController.addAssetHistory
     },
+    {
+        method: 'GET',
+        path: '/History/{user?}',
+        config: {
+            cors : true,
+        },
+        handler: AssetController.assetHistory
+    },
 ];
