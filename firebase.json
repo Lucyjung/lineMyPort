@@ -10,6 +10,10 @@
       {
         "source": "/summary",
         "destination": "/index.html"
+      },
+	  {
+        "source": "/graph",
+        "destination": "/index.html"
       }
     ]
   }
