@@ -15,18 +15,21 @@ class Table extends Component{
             Header: 'Type',
             accessor: 'type',
         },  {
-            Header: 'Cost',
-            accessor: 'cost',
-        },  {
             Header: 'Volume',
             accessor: 'volume',
         },{
+            Header: 'Cost',
+            accessor: 'cost',
+        }, {
+            Header: 'Market Value',
+            accessor: 'marketValue',
+        }, {
             Header: 'Average Cost/Share',
             accessor: 'avgCost',
         } ,{
-            Header: 'Market Price',
+            Header: 'Price/ Share',
             accessor: 'marketPrice',
-        }, {
+        } ,{
             Header: 'P&L',
             accessor: 'PL',
             Cell: props => <span style={{
