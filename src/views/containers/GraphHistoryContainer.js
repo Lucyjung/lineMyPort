@@ -236,14 +236,14 @@ class SummaryContainer extends Component{
                         <button type="button" className="btn btn-secondary" onClick={this.onClickChangePeriod.bind(this, 'YEAR')}>Year</button>
                     </div>
                 </div>
-                <div className="row">
-                    <div className="col-xs-6 col-md-4">
+                <div className="row" style={{display : 'flex'}}>
+                    <div className="col-xs-6 col-md-3">
                         <span className="glyphicon glyphicon-chevron-left" aria-hidden="true" onClick={this.onClickPrevious}></span>
                     </div>
                     <div className="col-xs-6 col-md-4">
                         <h5> {this.state.selectedPeriod}</h5>
                     </div>
-                    <div className="col-xs-6 col-md-4">
+                    <div className="col-xs-6 col-md-3">
                         <span className="glyphicon glyphicon-chevron-right" aria-hidden="true" onClick={this.onClickNext}></span>
                     </div>
                 </div>
