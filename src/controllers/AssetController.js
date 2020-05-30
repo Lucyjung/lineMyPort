@@ -56,7 +56,7 @@ module.exports = {
                     summary.unknown += parseFloat(list.asset[i].cost);
                 }
                 list.asset[i].cost = numberWithCommas(list.asset[i].cost);
-                list.asset[i].PL = numberWithCommas(list.asset[i].PL);
+                // list.asset[i].PL = numberWithCommas(list.asset[i].PL);
                 list.asset[i].avgCost = numberWithCommas(list.asset[i].avgCost);
                 list.asset[i].marketValue = numberWithCommas(list.asset[i].marketPrice * list.asset[i].volume);
             }
