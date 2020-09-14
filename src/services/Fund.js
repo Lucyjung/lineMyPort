@@ -41,14 +41,13 @@ async function getFundAPI(symbols, subtract_day) {
     }
 
     for (let symbol of symbols){
-        console.log('symbol : ' + symbol)
         if (!fundData[symbol]){
-            console.log('added symbol : ' + symbol)
             remnant.push(symbol)
         }
     }
 
     if (remnant.length > 0 ){
+        console.log(remnant)
         fundData = getFund(remnant,subtract_day, fundData)
     }
     return fundData;    
