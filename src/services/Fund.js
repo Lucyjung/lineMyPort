@@ -31,7 +31,6 @@ async function getFundAPI(symbols, subtract_day) {
     postData.symbols = symbols
     postData.date = d
     let fundData = {};
-    let remnant = [];
     const response = await axios.post('https://api.settrade.com/api/fund-nav/by-condition', postData);
     if (response && response.data && response.data.fundNavs){
         let funds = response.data.fundNavs
@@ -40,16 +39,6 @@ async function getFundAPI(symbols, subtract_day) {
         }
     }
 
-    for (let symbol of symbols){
-        if (!fundData[symbol]){
-            remnant.push(symbol)
-        }
-    }
-
-    if (remnant.length > 0 ){
-        console.log(remnant)
-        fundData = getFund(remnant,subtract_day, fundData)
-    }
     return fundData;    
 }
 async function getFund(symbols, subtract_day, fundData) {
