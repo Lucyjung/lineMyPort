@@ -10,7 +10,7 @@ module.exports = {
         else{
             for (let i = 0; i < LIMIT_RETRIES; i++){
                 try{
-                    let price_list = await getFund(symbols,i);
+                    let price_list = await getFundAPI(symbols,i);
                     if (price_list && Object.keys(price_list).length > 0){
                         return price_list;
                     }
@@ -22,6 +22,24 @@ module.exports = {
         
     }
 };
+async function getFundAPI(symbols, subtract_day) {
+    if (!subtract_day) subtract_day = 0;
+    const moment = require('moment');
+    let d = moment().subtract(subtract_day, 'days').format('DD/MM/YYYY');
+    let postData = {"amcId":"All","investmentPolicy":"All","dividendPolicy":"All","change":"All","projectType":"All"}
+    postData.symbols = symbols
+    postData.date = d
+    let fundData = {};
+    const response = await axios.post('https://api.settrade.com/api/fund-nav/by-condition', postData);
+    if (response && response.data && response.data.fundNavs){
+        let funds = response.data.fundNavs
+        for (let fund of funds){
+            fundData[fund.symbol] = fund.navPerUnit
+        }
+        
+    }
+    return fundData;    
+}
 async function getFund(symbols, subtract_day) {
     if (!subtract_day) subtract_day = 0;
     const moment = require('moment');
