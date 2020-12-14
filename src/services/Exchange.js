@@ -12,7 +12,7 @@ module.exports = {
             let result = {};
             for (let symbol of symbols){
                 if (response && response.data && response.data.rates[symbol]){
-                    result[symbol] = response.data.rates[symbol]
+                    result[symbol] = 1/response.data.rates[symbol]
                 }
             }
             return result;

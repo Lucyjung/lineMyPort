@@ -1,9 +1,16 @@
 const Asset = require('../models/Asset');
 const Fund = require('../services/Fund');
+const Exchange = require('../services/Exchange');
+const ThaiGold = require('../services/ThaiGold');
 const YahooFin = require('../services/YahooFinance');
-const CASH = 'CASH';
-const STOCK = 'STOCK';
-const FUND = 'FUND';
+
+const ASSET_TYPE = [
+    {NAME : 'STOCK', field : 'stock', toUpdatePrice : true, individual : true, dividend : true, updateFunc : YahooFin.getPrice},
+    {NAME : 'FUND', field : 'fund', toUpdatePrice : true, individual : false, dividend : true,updateFunc : Fund.getPrice},
+    {NAME : 'CASH', field : 'cash', toUpdatePrice : false, individual : false, dividend : false, updateFunc : null},
+    {NAME : 'FX', field : 'fx', toUpdatePrice : true, individual : false, dividend : false, updateFunc : Exchange.getPrice},
+    {NAME : 'GOLD', field : 'gold', toUpdatePrice : true, individual : false, dividend : false, updateFunc : ThaiGold.getPrice},
+]
 module.exports = {
     // ********************************************//
     // Name: getAsset
@@ -31,26 +38,19 @@ module.exports = {
             let summary = {
                 totalMarket : 0,
                 totalCost : 0,
-                cash : 0,
-                stock : 0,
-                fund : 0,
                 unknown: 0
             };
+            for (const asset of ASSET_TYPE){
+                summary[asset.field] = 0;
+            }
             for (let i  in list.asset){
 
                 summary.totalCost += list.asset[i].cost;
                 
                 if (list.asset[i].marketPrice > 0 ){
                     summary.totalMarket += list.asset[i].volume * list.asset[i].marketPrice;
-                    if (list.asset[i].type.toUpperCase() == STOCK){
-                        summary.stock += list.asset[i].volume * list.asset[i].marketPrice;
-                    }
-                    else if (list.asset[i].type.toUpperCase() == FUND){
-                        summary.fund += list.asset[i].volume * list.asset[i].marketPrice;
-                    }
-                    else if (list.asset[i].type.toUpperCase() == CASH){
-                        summary.cash += list.asset[i].volume * list.asset[i].marketPrice;
-                    }
+                    let info = getAssetInfo(list.asset[i].type.toUpperCase());
+                    summary[info.field] += list.asset[i].volume * list.asset[i].marketPrice;
                 }
                 else{
                     summary.unknown += parseFloat(list.asset[i].cost);
@@ -191,12 +191,12 @@ module.exports = {
                     historySnap.forEach( (snap) => {
                         const assets = snap.data().asset;
                         const market = {
-                            stock: 0,
-                            fund: 0,
-                            cash: 0,
                             total : 0,
                             unknown: 0
                         };
+                        for (const asset of ASSET_TYPE){
+                            market[asset.field] = 0;
+                        }
                         for (let asset of assets){
                             let price = asset.volume * asset.marketPrice;
                             if (typeof asset.marketPrice == 'object' && asset.marketPrice.raw){
@@ -205,13 +205,12 @@ module.exports = {
                             if (!asset.marketPrice){
                                 price = asset.cost;
                                 market.unknown += price;
-                            }
-                            else if (asset.type.toUpperCase() == STOCK ) {
-                                market.stock +=  price;
-                            } else if (asset.type.toUpperCase() == FUND) {
-                                market.fund +=  price;
-                            } else if (asset.type.toUpperCase() == CASH) {
-                                market.cash +=  price;
+                            } else {
+                                for (const asset of ASSET_TYPE){
+                                    if (asset.type.toUpperCase() == asset.NAME ){
+                                        market[asset.field] +=  price;
+                                    }
+                                }
                             }
                             market.total += price;
                         }
@@ -245,10 +244,15 @@ module.exports = {
 function getAssetList(assetSnap){
     return new Promise((fulfilled)=> { 
         let assetList = [];
-        let fundList = [];
-        let stockList = [];
+
         let profitList = [];
         let dividendList = {};
+        result = {asset : assetList, profit: profitList, dividendList: dividendList}
+        for (const asset of ASSET_TYPE){
+            if (asset.toUpdatePrice){
+                result[asset.field] = []
+            }
+        }
         assetSnap.forEach( (asset) => {
             let assetInfo = {
                 symbol: asset.data().name,
@@ -261,11 +265,9 @@ function getAssetList(assetSnap){
             };
             if (asset.data().volume > 0){
                 assetInfo.avgCost = asset.data().cost/asset.data().volume;
-                if (asset.data().type.toUpperCase() == STOCK){
-                    stockList.push(asset.data().name);
-                }
-                else if (asset.data().type.toUpperCase() == FUND){
-                    fundList.push(asset.data().name);
+                let info = getAssetInfo(assetInfo.type.toUpperCase());
+                if (info.toUpdatePrice ){
+                    result[info.field].push(asset.data().name)
                 }
                 assetList.push(assetInfo);
             }
@@ -286,7 +288,7 @@ function getAssetList(assetSnap){
             // get Dividend list
             let histories = asset.data().history;
             for (let iHist in histories){
-                if (assetInfo.type.toUpperCase() != CASH &&
+                if (getAssetInfo(assetInfo.type.toUpperCase()).dividend &&
                   histories[iHist].action.toUpperCase() == Asset.action.dividend){
                     let date = new Date(histories[iHist].date);
                     let year = date.getFullYear();
@@ -308,28 +310,39 @@ function getAssetList(assetSnap){
                 }
             }
         });
-        fulfilled({fund: fundList, asset: assetList, stock: stockList, profit: profitList, dividendList: dividendList});
+        fulfilled(result);
     });
     
 }
 async function getAssetPrice(list) {
-    let fundNav = false;
+    let priceList = {};
             
-    if (list.fund.length > 0){
-        fundNav = await Fund.getPrice(list.fund);
+    // if (list.fund.length > 0){
+    //     fundNav = await Fund.getPrice(list.fund);
+    // }
+    for (let i in ASSET_TYPE){
+        if (!ASSET_TYPE[i].individual && typeof ASSET_TYPE[i].updateFunc == 'function'){
+            priceList[ASSET_TYPE[i].field] = await ASSET_TYPE[i].updateFunc(list[ASSET_TYPE[i].field]);
+        }
     }
     for (let i  in list.asset){
 
         let price = 0;
-        if (list.stock.length > 0 && list.stock.indexOf(list.asset[i].symbol) > -1){
-            price = await YahooFin.getPrice(list.asset[i].symbol);
-            
-        }else if (fundNav && fundNav[list.asset[i].symbol] ){
-            price = fundNav[list.asset[i].symbol];
-        }
-        else if (list.asset[i].type.toUpperCase() == CASH){
+
+        let asset = getAssetInfo(list.asset[i].type.toUpperCase())
+        if (asset.toUpdatePrice == false){
             price = list.asset[i].cost;
         }
+        else if (asset.individual){
+            if (list[asset.field].length > 0 && list[asset.field].indexOf(list.asset[i].symbol) > -1){
+                price = await asset.updateFunc(list.asset[i].symbol)
+            } 
+        } else {
+            if (priceList[asset.field] && priceList[asset.field][list.asset[i].symbol] ){
+                price = priceList[asset.field][list.asset[i].symbol];
+            }
+        }
+
         if (!price){
             price = 0;
         }
@@ -349,4 +362,11 @@ async function getAssetPrice(list) {
 }
 function numberWithCommas(num , digit=2) {
     return num.toFixed(digit).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+function getAssetInfo(name){
+    for (const asset of ASSET_TYPE){
+        if (asset.NAME == name){
+            return asset;
+        }
+    }
 }

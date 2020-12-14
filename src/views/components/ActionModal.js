@@ -7,30 +7,25 @@ class ActionModal extends React.Component {
     
     render() {
         let readonly = true;
-        let isStock = true;
-        let isFund = false;
-        let isCash = false;
+        let supportAsset = [
+            {type: 'Stock'},
+            {type: 'Fund'},
+            {type: 'Cash'},
+            {type: 'FX'},
+            {type: 'Gold'}
+        ];
+        let menuItems = [];
         let type = this.props.type;
         if (!this.props.isExist){
             readonly = false;
         }
-        if (this.props.type == 'Stock'){
-            isStock = true;
-            isFund = false;
-            isCash = false;
-        }
-        else if (this.props.type == 'Fund'){
-            isStock = false;
-            isFund = true;
-            isCash = false;
-        }
-        else if (this.props.type == 'Cash'){
-            isStock = false;
-            isFund = false;
-            isCash = true;
-        }
-        else{
-            type = 'Stock';
+        
+        for (let asset of supportAsset){
+            if (type == asset.type){
+                menuItems.push(<MenuItem eventKey={asset.type} active={true}>{asset.type}</MenuItem>)
+            } else {
+                menuItems.push(<MenuItem eventKey={asset.type} active={false}>{asset.type}</MenuItem>)
+            }
         }
 
         let typeDropDown = <DropdownButton 
@@ -38,9 +33,9 @@ class ActionModal extends React.Component {
             title={type} 
             onSelect={this.props.onTypeChange}
             disabled={readonly}>
-            <MenuItem eventKey="Stock" active={isStock}>Stock</MenuItem>
+            {menuItems/* <MenuItem eventKey="Stock" active={isStock}>Stock</MenuItem>
             <MenuItem eventKey="Fund" active={isFund}>Fund</MenuItem>
-            <MenuItem eventKey="Cash" active={isCash}>Cash</MenuItem>
+            <MenuItem eventKey="Cash" active={isCash}>Cash</MenuItem> */}
         </DropdownButton>;
         let actionTitle = this.props.action.charAt(0).toUpperCase() + this.props.action.substr(1);
         let buttonGrp = <Row className="show-grid">
