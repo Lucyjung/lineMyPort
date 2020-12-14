@@ -43,6 +43,7 @@ class Table extends Component{
             <ReactTable
                 data={this.props.data}
                 columns={columns}
+                defaultPageSize={50}
             />
         );
     }

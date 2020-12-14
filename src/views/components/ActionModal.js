@@ -7,6 +7,7 @@ class ActionModal extends React.Component {
     
     render() {
         let readonly = true;
+        
         let supportAsset = [
             {type: 'Stock'},
             {type: 'Fund'},
@@ -16,6 +17,7 @@ class ActionModal extends React.Component {
         ];
         let menuItems = [];
         let type = this.props.type;
+        let isCash = (type.toUpperCase() == 'CASH')
         if (!this.props.isExist){
             readonly = false;
         }
