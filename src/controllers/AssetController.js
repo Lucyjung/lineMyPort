@@ -206,9 +206,9 @@ module.exports = {
                                 price = asset.cost;
                                 market.unknown += price;
                             } else {
-                                for (const asset of ASSET_TYPE){
-                                    if (asset.type.toUpperCase() == asset.NAME ){
-                                        market[asset.field] +=  price;
+                                for (const type of ASSET_TYPE){
+                                    if (asset.type.toUpperCase() == type.NAME ){
+                                        market[type.field] +=  price;
                                     }
                                 }
                             }
