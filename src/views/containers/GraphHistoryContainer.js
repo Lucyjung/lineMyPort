@@ -196,6 +196,7 @@ class SummaryContainer extends Component{
                 chartData.datasets[2].data.push(raw[i].market.cash);
                 chartData.datasets[3].data.push(raw[i].market.fx);
                 chartData.datasets[4].data.push(raw[i].market.gold);
+                chartData.datasets[4].data.push(raw[i].market.insure);
                 chartData.datasets[5].data.push(raw[i].market.unknown);
                 chartData.datasets[6].data.push(raw[i].market.total);
             }
