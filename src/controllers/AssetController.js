@@ -10,7 +10,8 @@ const ASSET_TYPE = [
     {NAME : 'CASH', field : 'cash', toUpdatePrice : false, individual : false, dividend : false, updateFunc : null},
     {NAME : 'FX', field : 'fx', toUpdatePrice : true, individual : false, dividend : false, updateFunc : Exchange.getPrice},
     {NAME : 'GOLD', field : 'gold', toUpdatePrice : true, individual : false, dividend : false, updateFunc : ThaiGold.getPrice},
-]
+    {NAME : 'INSURE', field : 'insure', toUpdatePrice : false, individual : false, dividend : false, updateFunc : null},
+];
 module.exports = {
     // ********************************************//
     // Name: getAsset

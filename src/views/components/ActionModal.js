@@ -13,11 +13,12 @@ class ActionModal extends React.Component {
             {type: 'Fund'},
             {type: 'Cash'},
             {type: 'FX'},
-            {type: 'Gold'}
+            {type: 'Gold'},
+            {type: 'Insure'}
         ];
         let menuItems = [];
         let type = this.props.type;
-        let isCash = (type.toUpperCase() == 'CASH')
+        let isCash = (type.toUpperCase() == 'CASH');
         if (!this.props.isExist){
             readonly = false;
         }
@@ -35,9 +36,7 @@ class ActionModal extends React.Component {
             title={type} 
             onSelect={this.props.onTypeChange}
             disabled={readonly}>
-            {menuItems/* <MenuItem eventKey="Stock" active={isStock}>Stock</MenuItem>
-            <MenuItem eventKey="Fund" active={isFund}>Fund</MenuItem>
-            <MenuItem eventKey="Cash" active={isCash}>Cash</MenuItem> */}
+            {menuItems}
         </DropdownButton>;
         let actionTitle = this.props.action.charAt(0).toUpperCase() + this.props.action.substr(1);
         let buttonGrp = <Row className="show-grid">

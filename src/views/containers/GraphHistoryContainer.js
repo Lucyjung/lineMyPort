@@ -159,6 +159,16 @@ class SummaryContainer extends Component{
                     data: []
                 },
                 {
+                    label: 'insure',
+                    fillColor: 'rgba(102,0,102,0.2)',
+                    strokeColor: 'rgba(102,0,102,1)',
+                    pointColor: 'rgba(102,0,102,1)',
+                    pointStrokeColor: '#fff',
+                    pointHighlightFill: '#fff',
+                    pointHighlightStroke: 'rgba(156,202,171,1)',
+                    data: []
+                },
+                {
                     label: 'Unknown',
                     fillColor: 'rgba(0,0,0,0.2)',
                     strokeColor: 'rgba(255,0,255,1)',
