@@ -139,6 +139,26 @@ class SummaryContainer extends Component{
                     data: []
                 },
                 {
+                    label: 'fx',
+                    fillColor: 'rgba(0,186,62,0.2)',
+                    strokeColor: 'rgba(0,186,62,1)',
+                    pointColor: 'rgba(0,186,62,1)',
+                    pointStrokeColor: '#fff',
+                    pointHighlightFill: '#fff',
+                    pointHighlightStroke: 'rgba(0,186,62,1)',
+                    data: []
+                },
+                {
+                    label: 'gold',
+                    fillColor: 'rgba(156,202,171,0.2)',
+                    strokeColor: 'rgba(156,202,171,1)',
+                    pointColor: 'rgba(156,202,171,1)',
+                    pointStrokeColor: '#fff',
+                    pointHighlightFill: '#fff',
+                    pointHighlightStroke: 'rgba(156,202,171,1)',
+                    data: []
+                },
+                {
                     label: 'Unknown',
                     fillColor: 'rgba(0,0,0,0.2)',
                     strokeColor: 'rgba(255,0,255,1)',
@@ -164,8 +184,10 @@ class SummaryContainer extends Component{
                 chartData.datasets[0].data.push(raw[i].market.stock);
                 chartData.datasets[1].data.push(raw[i].market.fund);
                 chartData.datasets[2].data.push(raw[i].market.cash);
-                chartData.datasets[3].data.push(raw[i].market.unknown);
-                chartData.datasets[4].data.push(raw[i].market.total);
+                chartData.datasets[3].data.push(raw[i].market.fx);
+                chartData.datasets[4].data.push(raw[i].market.gold);
+                chartData.datasets[5].data.push(raw[i].market.unknown);
+                chartData.datasets[6].data.push(raw[i].market.total);
             }
 
             
