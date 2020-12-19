@@ -100,6 +100,30 @@ class SummaryContainer extends Component{
                     highlight: '#FFC870',
                 });
             }
+            else if (key.toUpperCase() == 'INSURE'){
+                chartData.push({
+                    value : json.summary[key],
+                    label : 'Insure',
+                    color: '#009900',
+                    highlight: '#009900',
+                });
+            }
+            else if (key.toUpperCase() == 'FX'){
+                chartData.push({
+                    value : json.summary[key],
+                    label : 'Fx',
+                    color: '#0066CC',
+                    highlight: '#0066CC',
+                });
+            }
+            else if (key.toUpperCase() == 'GOLD'){
+                chartData.push({
+                    value : json.summary[key],
+                    label : 'Gold',
+                    color: '#999900',
+                    highlight: '#999900',
+                });
+            }
             else if (key.toUpperCase() == 'UNKNOWN'){
                 chartData.push({
                     value : json.summary[key],

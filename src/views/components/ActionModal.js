@@ -37,7 +37,7 @@ class ActionModal extends React.Component {
             onSelect={this.props.onTypeChange}
             disabled={readonly}>
             {menuItems}
-        </DropdownButton>;
+        </DropdownButton>
         let actionTitle = this.props.action.charAt(0).toUpperCase() + this.props.action.substr(1);
         let buttonGrp = <Row className="show-grid">
             <Col xs={12} md={10}>

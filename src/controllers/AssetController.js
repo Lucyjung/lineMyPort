@@ -248,7 +248,7 @@ function getAssetList(assetSnap){
 
         let profitList = [];
         let dividendList = {};
-        result = {asset : assetList, profit: profitList, dividendList: dividendList}
+        let result = {asset : assetList, profit: profitList, dividendList: dividendList}
         for (const asset of ASSET_TYPE){
             if (asset.toUpdatePrice){
                 result[asset.field] = []
