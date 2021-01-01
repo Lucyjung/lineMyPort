@@ -3,39 +3,44 @@ const axios = require('axios');
 module.exports = {
 
     getPrice: async (symbols) => {
-        const LIMIT_RETRIES = 7;
+        const LIMIT_RETRIES = 9;
         if (symbols.length <= 0){
             return null;
         }
         else{
+            
+            let fundData = {};
             for (let i = 0; i < LIMIT_RETRIES; i++){
                 try{
-                    let price_list = await getFundAPI(symbols,i);
-                    if (price_list && Object.keys(price_list).length > 0){
-                        return price_list;
+                    fundData = await getFundAPI(symbols,i, fundData);
+                    if (fundData && Object.keys(fundData).length == symbols.length){
+                        return fundData;
                     }
                 }catch (err){
                     continue;
                 }
             }
+            return fundData;
         }
         
     }
 };
-async function getFundAPI(symbols, subtract_day) {
+async function getFundAPI(symbols, subtract_day, fundData) {
     if (!subtract_day) subtract_day = 0;
     const moment = require('moment');
     let d = moment().subtract(subtract_day, 'days').format('DD/MM/YYYY');
-    let postData = {"amcId":"All","investmentPolicy":"All","dividendPolicy":"All","change":"All","projectType":"All"}
+    let postData = {'amcId':'All','investmentPolicy':'All','dividendPolicy':'All','change':'All','projectType':'All'};
 
-    postData.symbols = symbols
-    postData.date = d
-    let fundData = {};
+    postData.symbols = symbols;
+    postData.date = d;
+    
     const response = await axios.post('https://api.settrade.com/api/fund-nav/by-condition', postData);
     if (response && response.data && response.data.fundNavs){
-        let funds = response.data.fundNavs
+        let funds = response.data.fundNavs;
         for (let fund of funds){
-            fundData[fund.symbol] = fund.navPerUnit
+            if (!fundData[fund.symbol]){
+                fundData[fund.symbol] = fund.navPerUnit;
+            }
         }
     }
 

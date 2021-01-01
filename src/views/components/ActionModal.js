@@ -49,11 +49,11 @@ class ActionModal extends React.Component {
                     <MenuItem eventKey="Sell" active={this.props.action == 'sell'}>Sell</MenuItem>
                     <MenuItem eventKey="Dividend" active={this.props.action == 'dividend'}>Dividend</MenuItem>
                     <MenuItem eventKey="Update" active={this.props.action == 'update'}>Update</MenuItem>
-                </DropdownButton>;
+                </DropdownButton>
             </Col>
             <Col xs={6} md={2}>
                 {typeDropDown}
-            </Col></Row>;
+            </Col></Row>
 
         
         
