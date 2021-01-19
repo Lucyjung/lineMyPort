@@ -5,12 +5,12 @@ const ThaiGold = require('../services/ThaiGold');
 const YahooFin = require('../services/YahooFinance');
 
 const ASSET_TYPE = [
-    {NAME : 'STOCK', field : 'stock', toUpdatePrice : true, individual : true, dividend : true, updateFunc : YahooFin.getPrice},
-    {NAME : 'FUND', field : 'fund', toUpdatePrice : true, individual : false, dividend : true,updateFunc : Fund.getPrice},
-    {NAME : 'CASH', field : 'cash', toUpdatePrice : false, individual : false, dividend : false, updateFunc : null},
-    {NAME : 'FX', field : 'fx', toUpdatePrice : true, individual : false, dividend : false, updateFunc : Exchange.getPrice},
-    {NAME : 'GOLD', field : 'gold', toUpdatePrice : true, individual : false, dividend : false, updateFunc : ThaiGold.getPrice},
-    {NAME : 'INSURE', field : 'insure', toUpdatePrice : false, individual : false, dividend : false, updateFunc : null},
+    {NAME : 'STOCK', field : 'stock', toUpdatePrice : true, individual : true, dividend : true, updateFunc : YahooFin.getPrice, isAging: false},
+    {NAME : 'FUND', field : 'fund', toUpdatePrice : true, individual : false, dividend : true,updateFunc : Fund.getPrice, isAging: false},
+    {NAME : 'CASH', field : 'cash', toUpdatePrice : false, individual : false, dividend : false, updateFunc : null, isAging: false},
+    {NAME : 'FX', field : 'fx', toUpdatePrice : true, individual : false, dividend : false, updateFunc : Exchange.getPrice, isAging: false},
+    {NAME : 'GOLD', field : 'gold', toUpdatePrice : true, individual : false, dividend : false, updateFunc : ThaiGold.getPrice, isAging: false},
+    {NAME : 'INSURE', field : 'insure', toUpdatePrice : false, individual : false, dividend : false, updateFunc : null, isAging: true},
 ];
 module.exports = {
     // ********************************************//
@@ -318,9 +318,6 @@ function getAssetList(assetSnap){
 async function getAssetPrice(list) {
     let priceList = {};
             
-    // if (list.fund.length > 0){
-    //     fundNav = await Fund.getPrice(list.fund);
-    // }
     for (let i in ASSET_TYPE){
         if (!ASSET_TYPE[i].individual && typeof ASSET_TYPE[i].updateFunc == 'function'){
             priceList[ASSET_TYPE[i].field] = await ASSET_TYPE[i].updateFunc(list[ASSET_TYPE[i].field]);
@@ -331,7 +328,19 @@ async function getAssetPrice(list) {
         let price = 0;
 
         let asset = getAssetInfo(list.asset[i].type.toUpperCase())
-        if (asset.toUpdatePrice == false){
+        if (asset.isAging){
+            let cost = 0
+            for (let hist of list.asset[i].history){
+                if (hist.action.toUpperCase() == "BUY"){
+                    price += hist.amount
+                    cost += hist.amount
+                } else if (hist.action.toUpperCase() == "DIVIDEND"){
+                    cost -= hist.amount
+                }
+            }
+            list.asset[i].cost = cost
+        }
+        else if (asset.toUpdatePrice == false){
             price = list.asset[i].cost;
         }
         else if (asset.individual){
