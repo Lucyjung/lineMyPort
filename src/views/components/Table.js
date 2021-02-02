@@ -18,7 +18,7 @@ class Table extends Component{
             Header: 'Volume',
             accessor: 'volume',
         },  {
-            Header: 'Holding Year',
+            Header: '#Year',
             accessor: 'holdingYear',
         },{
             Header: 'Actual Cost',
@@ -39,14 +39,14 @@ class Table extends Component{
             Header: 'P&L',
             accessor: 'PL',
             Cell: props => <span style={{
-                color: props.value > 0 ? props.value == 0?'#CDFF00': '#57d500': '#ff2e00'
+                color: props.value >= 0 ? props.value == 0?'#CDFF00': '#57d500': '#ff2e00'
             }}>{props.value} % </span>// Custom cell components!
         }
         ,{
             Header: 'Avg P&L',
             accessor: 'avgPL',
             Cell: props => <span style={{
-                color: props.value > 0 ? props.value == 0?'#CDFF00': '#57d500': '#ff2e00'
+                color: props.value >= 0 ? props.value == 0?'#FFFF00': '#57d500': '#ff2e00'
             }}>{props.value} % </span>// Custom cell components!
         }, {
             Header: 'Action',

@@ -63,6 +63,9 @@ class SummaryContainer extends Component{
         window.addEventListener('load', this.initialize);
         
     }
+    numberWithCommas(num , digit=2) {
+        return Number(num).toFixed(digit).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
     async getPortData(){
         let response = await fetch(BACKEND_API_URL + '/portfolio/' + this.state.user);
         let json = await response.json();
@@ -137,7 +140,7 @@ class SummaryContainer extends Component{
         for (let key in json.dividendList){
             dividendChartData.labels.push(key);
             dividendChartData.datasets[0].data.push(json.dividendList[key].amount);
-            dividendData[key] = json.dividendList[key].amount;
+            dividendData[key] = this.numberWithCommas(json.dividendList[key].amount);
         }
 
         for (let key in json.profit){
@@ -148,6 +151,12 @@ class SummaryContainer extends Component{
                 profitData[json.profit[key].symbol] = json.profit[key].profit;
             }
             
+        }
+        for (let i in json.summary){
+            json.summary[i] = this.numberWithCommas(json.summary[i]);
+        }
+        for (let i in profitData){
+            profitData[i] = this.numberWithCommas(profitData[i]);
         }
         this.setState({ 
             sumData: json.summary,

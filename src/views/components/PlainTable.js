@@ -7,7 +7,7 @@ class PlainTable extends Component{
 
 
         return (
-            <Table striped>
+            <Table>
                 <thead>
                     <tr>
                         {this.props.header.map( header => 

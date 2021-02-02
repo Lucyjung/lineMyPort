@@ -394,6 +394,9 @@ function getAssetCost(histories){
     let now = new Date();
     let startDate = new Date(histories[0].date);
     let holdingYear = now.getFullYear() - startDate.getFullYear();
+    if (holdingYear == 0){
+        holdingYear = 1
+    }
     for (let hist of histories){
         
         if (hist.action.toUpperCase() == Asset.action.buy){
