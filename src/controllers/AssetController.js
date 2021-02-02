@@ -41,7 +41,7 @@ module.exports = {
                 'Total Cost Value' : 0,
                 'Total Average Cost Value': 0,
                 'Total Dividend' : 0,
-                'Hoding Year': 0,
+                'Holding Year': 0,
                 'Unrealized P/L' : 0,
                 'Unrealized P/L Percentage (%)' : 0,
                 'Total Return' : 0,  
@@ -64,8 +64,8 @@ module.exports = {
                 else{
                     summary.unknown += parseFloat(list.asset[i].cost);
                 }
-                if (summary['Hoding Year'] < list.asset[i].holdingYear){
-                    summary['Hoding Year'] = list.asset[i].holdingYear
+                if (summary['Holding Year'] < list.asset[i].holdingYear){
+                    summary['Holding Year'] = list.asset[i].holdingYear
                 }
                 list.asset[i].cost = numberWithCommas(list.asset[i].cost);
                 list.asset[i].PL = (list.asset[i].PL).toFixed(2);
