@@ -10,7 +10,7 @@ const ASSET_TYPE = [
     {NAME : 'CASH', field : 'cash', toUpdatePrice : false, individual : false, dividend : false, updateFunc : null},
     {NAME : 'FX', field : 'fx', toUpdatePrice : true, individual : false, dividend : false, updateFunc : Exchange.getPrice},
     {NAME : 'GOLD', field : 'gold', toUpdatePrice : true, individual : false, dividend : false, updateFunc : ThaiGold.getPrice},
-    {NAME : 'INSURE', field : 'insure', toUpdatePrice : false, individual : false, dividend : false, updateFunc : null},
+    {NAME : 'INSURE', field : 'insure', toUpdatePrice : false, individual : false, dividend : true, updateFunc : null},
 ];
 module.exports = {
     // ********************************************//
@@ -37,8 +37,16 @@ module.exports = {
             let list = await getAssetList(assetSnap);
             list = await getAssetPrice(list);
             let summary = {
-                totalMarket : 0,
-                totalCost : 0,
+                'Total Market Value' : 0,
+                'Total Cost Value' : 0,
+                'Total Average Cost Value': 0,
+                'Total Dividend' : 0,
+                'Hoding Year': 0,
+                'Unrealized P/L' : 0,
+                'Unrealized P/L Percentage (%)' : 0,
+                'Total Return' : 0,  
+                'Total Return Percentage (%)' : 0,
+                'Average Return Percentage (%)' : 0,
                 unknown: 0
             };
             for (const asset of ASSET_TYPE){
@@ -46,22 +54,30 @@ module.exports = {
             }
             for (let i  in list.asset){
 
-                summary.totalCost += list.asset[i].cost;
-                
+                summary['Total Cost Value'] += list.asset[i].cost;
+                summary['Total Average Cost Value'] += list.asset[i].totalAvgCost;
                 if (list.asset[i].marketPrice > 0 ){
-                    summary.totalMarket += list.asset[i].volume * list.asset[i].marketPrice;
+                    summary['Total Market Value'] += list.asset[i].volume * list.asset[i].marketPrice;
                     let info = getAssetInfo(list.asset[i].type.toUpperCase());
                     summary[info.field] += list.asset[i].volume * list.asset[i].marketPrice;
                 }
                 else{
                     summary.unknown += parseFloat(list.asset[i].cost);
                 }
+                if (summary['Hoding Year'] < list.asset[i].holdingYear){
+                    summary['Hoding Year'] = list.asset[i].holdingYear
+                }
                 list.asset[i].cost = numberWithCommas(list.asset[i].cost);
                 list.asset[i].PL = (list.asset[i].PL).toFixed(2);
                 list.asset[i].avgCost = numberWithCommas(list.asset[i].avgCost);
                 list.asset[i].marketValue = numberWithCommas(list.asset[i].marketPrice * list.asset[i].volume);
             }
-
+            summary['Total Dividend'] = summary['Total Cost Value'] - summary['Total Average Cost Value'];
+            summary['Unrealized P/L'] = (summary['Total Market Value'] - summary['Total Cost Value'])
+            summary['Unrealized P/L Percentage (%)'] = summary['Unrealized P/L']/summary['Total Cost Value'] * 100;
+            summary['Total Return'] = summary['Total Market Value'] - summary['Total Cost Value'] + summary['Total Dividend']
+            summary['Total Return Percentage (%)'] = summary['Total Return']/summary['Total Cost Value'] * 100
+            summary['Average Return Percentage (%)'] = summary['Total Return Percentage (%)']/summary['Hoding Year']
             returnMsg.status = true;
             returnMsg.msg = 'Success';
             returnMsg.data = list.asset;
@@ -328,7 +344,15 @@ async function getAssetPrice(list) {
         let price = 0;
 
         let asset = getAssetInfo(list.asset[i].type.toUpperCase())
+        let cost = getAssetCost(list.asset[i].history)
+        list.asset[i].holdingYear = cost.holdingYear
+        if (asset.dividend){
+            list.asset[i].cost = cost.actualCost
+        } 
         if (asset.toUpdatePrice == false){
+            if (asset.dividend){
+                list.asset[i].avgCost = cost.avgCost/list.asset[i].volume
+            }
             price = list.asset[i].cost;
         }
         else if (asset.individual){
@@ -340,23 +364,49 @@ async function getAssetPrice(list) {
                 price = priceList[asset.field][list.asset[i].symbol];
             }
         }
-
+        
+        
         if (!price){
             price = 0;
         }
         list.asset[i].marketPrice = price;
         if (list.asset[i].cost !=  0 && price != 0){
-            list.asset[i].PL = (price - list.asset[i].avgCost)/list.asset[i].avgCost*100;
+            let actualCostPerShare = cost.avgCost/list.asset[i].volume
+            list.asset[i].PL = (price - list.asset[i].avgCost)/actualCostPerShare*100;
+            list.asset[i].avgPL = list.asset[i].PL/list.asset[i].holdingYear
         }
         else{
             list.asset[i].PL = 0;
+            list.asset[i].avgPL = 0;
         }
         list.asset[i].cost = parseFloat(list.asset[i].cost);
+        
         list.asset[i].PL = parseFloat(list.asset[i].PL);
         list.asset[i].avgCost = parseFloat(list.asset[i].avgCost);
-        
+        list.asset[i].totalAvgCost = parseFloat((list.asset[i].avgCost * list.asset[i].volume).toFixed(2));
+        list.asset[i].avgPL = parseFloat(list.asset[i].avgPL.toFixed(2));
     }
     return list;
+}
+function getAssetCost(histories){
+    let actualCost = 0;
+    let avgCost = 0;
+    let now = new Date();
+    let startDate = new Date(histories[0].date);
+    let holdingYear = now.getFullYear() - startDate.getFullYear();
+    for (let hist of histories){
+        
+        if (hist.action.toUpperCase() == Asset.action.buy){
+            actualCost += hist.amount
+            avgCost += hist.amount
+        } else if (hist.action.toUpperCase() == Asset.action.sell){
+            actualCost -= hist.amount
+            avgCost += hist.amount
+        } else if (hist.action.toUpperCase() == Asset.action.dividend){
+            avgCost -= hist.amount
+        }
+    }
+    return {actualCost, avgCost, holdingYear}
 }
 function numberWithCommas(num , digit=2) {
     return num.toFixed(digit).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
