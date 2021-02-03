@@ -19,7 +19,7 @@ class HistoryContainer extends Component{
         return (
             <div>
                 <h2>{this.state.symbol}</h2>
-                <Table striped>
+                <Table>
                     <thead>
                         <tr>
                             {this.state.header.map( header => 
