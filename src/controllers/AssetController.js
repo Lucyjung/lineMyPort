@@ -362,7 +362,10 @@ async function getAssetPrice(list) {
         list.asset[i].holdingYear = cost.holdingYear
         if (asset.dividend){
             list.asset[i].cost = cost.actualCost
-        } 
+        } else {
+            cost.actualCost = list.asset[i].cost;
+            cost.avgCost = list.asset[i].cost;
+        }
         if (asset.toUpdatePrice == false){
             if (asset.dividend){
                 list.asset[i].avgCost = cost.avgCost/list.asset[i].volume
@@ -397,8 +400,8 @@ async function getAssetPrice(list) {
         list.asset[i].ROI = roundNumber((cost.dividend/cost.actualCost)*100);
         list.asset[i].avgCost = roundNumber(list.asset[i].avgCost);
         list.asset[i].totalAvgCost = roundNumber(list.asset[i].avgCost * list.asset[i].volume);
-        list.asset[i].unrealizedPL = roundNumber((price * list.asset[i].volume) - list.asset[i].cost);
-        list.asset[i].adjUnrealizedPL = roundNumber((price * list.asset[i].volume) - list.asset[i].totalAvgCost);
+        list.asset[i].unrealizedPL = roundNumber((price * list.asset[i].volume) - cost.actualCost);
+        list.asset[i].adjUnrealizedPL = roundNumber((price * list.asset[i].volume) - cost.avgCost);
         list.asset[i].curDividend = roundNumber(cost.curDividend);
         list.asset[i].prevDividend = roundNumber(cost.prevDividend);
         list.asset[i].curDividendPercent = roundNumber((cost.curDividend/cost.actualCost)*100);
