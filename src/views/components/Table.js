@@ -35,6 +35,21 @@ class Table extends Component{
             accessor: 'marketValue',
             show : !isMobile
         }, {
+            Header: 'Unrealized P&L',
+            accessor: 'unrealizedPL',
+            show : !isMobile,
+            Cell: props => <span style={{
+                color: props.value >= 0 ? props.value == 0?'#FFFF00': '#57d500': '#ff2e00'
+            }}>{props.value} </span>// Custom cell components!
+        },
+        {
+            Header: 'Adjusted P&L',
+            accessor: 'adjUnrealizedPL',
+            show : !isMobile,
+            Cell: props => <span style={{
+                color: props.value >= 0 ? props.value == 0?'#FFFF00': '#57d500': '#ff2e00'
+            }}>{props.value} </span>// Custom cell components!
+        },{
             Header: 'Average Cost/Share',
             accessor: 'avgCost',
         } ,{
@@ -78,7 +93,7 @@ class Table extends Component{
                 SubComponent={row => {
                     let infoTbl = [
                         {name : 'ROI' , accessor : 'ROI', unit : '%' , pos: '#57d500' , neg : '#ff2e00', neutral : '#FFFF00'},
-                        {name : '#Year' , accessor : 'holdingYear', unit : 'Years' , pos: '#57d500' , neg : '#ff2e00', neutral : '#FFFF00'},
+                        {name : '#Year' , accessor : 'holdingYear', unit : 'Years' , pos: '#ffffff' , neg : '#ffffff', neutral : '#ffffff'},
                         {name : 'Average Dividend Per Year' , accessor : 'avgDividendPerYear', unit : '฿' , pos: '#57d500' , neg : '#ff2e00', neutral : '#FFFF00'},
                         {name : 'Average Dividend' , accessor : 'avgDividendPercent', unit : '%' , pos: '#57d500' , neg : '#ff2e00', neutral : '#FFFF00'},
                         {name : 'Current Year Dividend' , accessor : 'curDividend', unit : '฿' , pos: '#57d500' , neg : '#ff2e00', neutral : '#FFFF00'},
@@ -89,6 +104,7 @@ class Table extends Component{
                         {name : 'Average Cost' , accessor : 'totalAvgCost', unit : '฿' , pos: '#57d500' , neg : '#ff2e00', neutral : '#FFFF00'},
                         {name : 'Market Value' , accessor : 'marketValue', unit : '฿' , pos: '#57d500' , neg : '#ff2e00', neutral : '#FFFF00'},
                         {name : 'Average P&L' , accessor : 'avgPL', unit : '%' , pos: '#57d500' , neg : '#ff2e00', neutral : '#FFFF00'},
+                        {name : 'Unrealized P&L' , accessor : 'unrealizedPL', unit : '฿' , pos: '#57d500' , neg : '#ff2e00', neutral : '#FFFF00'},
                     ];
                     return (
                         infoTbl.map( (info) =>{
