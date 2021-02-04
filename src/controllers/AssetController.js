@@ -395,6 +395,7 @@ async function getAssetPrice(list) {
         }
         list.asset[i].cost = roundNumber(list.asset[i].cost);
         list.asset[i].ROI = roundNumber((cost.dividend/cost.actualCost)*100);
+        list.asset[i].unrealizedPL = roundNumber((price * list.asset[i].volume) - cost.actualCost);
         list.asset[i].curDividend = roundNumber(cost.curDividend);
         list.asset[i].prevDividend = roundNumber(cost.prevDividend);
         list.asset[i].curDividendPercent = roundNumber((cost.curDividend/cost.actualCost)*100);

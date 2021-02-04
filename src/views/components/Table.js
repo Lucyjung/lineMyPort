@@ -76,24 +76,26 @@ class Table extends Component{
                 defaultPageSize={35}
                 pageSize={this.props.data.length || 35}
                 SubComponent={row => {
-                    console.log(row)
                     let infoTbl = [
-                        {name : 'ROI' , accessor : 'ROI', unit : '%' , style : {color : '#57d500'}},
-                        {name : '#Year' , accessor : 'holdingYear', unit : 'Years' , style : {color : '#FFFFFF'}},
-                        {name : 'Average Dividend Per Year' , accessor : 'avgDividendPerYear', unit : '฿' , style : {color : '#57d500'}},
-                        {name : 'Average Dividend' , accessor : 'avgDividendPercent', unit : '%' , style : {color : '#57d500'}},
-                        {name : 'Current Year Dividend' , accessor : 'curDividend', unit : '฿' , style : {color : '#57d500'}},
-                        {name : 'Current Year Dividend' , accessor : 'curDividendPercent', unit : '%' , style : {color : '#57d500'}},
-                        {name : 'Last Year Dividend' , accessor : 'prevDividend', unit : '฿' , style : {color : '#57d500'}},
-                        {name : 'Last Year Dividend' , accessor : 'prevDividendPercent', unit : '%' , style : {color : '#57d500'}},
-                        {name : 'Actual Cost' , accessor : 'cost', unit : '฿' , style : {color : '#FFFF00'}},
-                        {name : 'Average Cost' , accessor : 'totalAvgCost', unit : '฿' , style : {color : '#FFFF00'}},
-                        {name : 'Market Value' , accessor : 'marketValue', unit : '฿' , style : {color : '#FFFFFF'}},
-                        {name : 'Average P&L' , accessor : 'avgPL', unit : '%' , style : {color : '#57d500'}},
+                        {name : 'ROI' , accessor : 'ROI', unit : '%' , pos: '#57d500' , neg : '#ff2e00', neutral : '#FFFF00'},
+                        {name : '#Year' , accessor : 'holdingYear', unit : 'Years' , pos: '#57d500' , neg : '#ff2e00', neutral : '#FFFF00'},
+                        {name : 'Average Dividend Per Year' , accessor : 'avgDividendPerYear', unit : '฿' , pos: '#57d500' , neg : '#ff2e00', neutral : '#FFFF00'},
+                        {name : 'Average Dividend' , accessor : 'avgDividendPercent', unit : '%' , pos: '#57d500' , neg : '#ff2e00', neutral : '#FFFF00'},
+                        {name : 'Current Year Dividend' , accessor : 'curDividend', unit : '฿' , pos: '#57d500' , neg : '#ff2e00', neutral : '#FFFF00'},
+                        {name : 'Current Year Dividend' , accessor : 'curDividendPercent', unit : '%' , pos: '#57d500' , neg : '#ff2e00', neutral : '#FFFF00'},
+                        {name : 'Last Year Dividend' , accessor : 'prevDividend', unit : '฿' , pos: '#57d500' , neg : '#ff2e00', neutral : '#FFFF00'},
+                        {name : 'Last Year Dividend' , accessor : 'prevDividendPercent', unit : '%' , pos: '#57d500' , neg : '#ff2e00', neutral : '#FFFF00'},
+                        {name : 'Actual Cost' , accessor : 'cost', unit : '฿' , pos: '#57d500' , neg : '#ff2e00', neutral : '#FFFF00'},
+                        {name : 'Average Cost' , accessor : 'totalAvgCost', unit : '฿' , pos: '#57d500' , neg : '#ff2e00', neutral : '#FFFF00'},
+                        {name : 'Market Value' , accessor : 'marketValue', unit : '฿' , pos: '#57d500' , neg : '#ff2e00', neutral : '#FFFF00'},
+                        {name : 'Average P&L' , accessor : 'avgPL', unit : '%' , pos: '#57d500' , neg : '#ff2e00', neutral : '#FFFF00'},
                     ];
                     return (
                         infoTbl.map( (info) =>{
-                            return (<span style={info.style}> {info.name} : {row.original[info.accessor]} {info.unit}</span>)
+                            let value = row.original[info.accessor]
+                            value = parseFloat(String(value).replace(/,/g, ''))
+                            let valueStr = value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                            return (<span style={{color : (value >= 0 ? value == 0?'#FFFF00': '#57d500': '#ff2e00')}}> {info.name} : {valueStr} {info.unit}</span>)
                         })
                     )
                   }}
