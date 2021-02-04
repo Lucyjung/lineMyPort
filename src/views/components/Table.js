@@ -105,6 +105,7 @@ class Table extends Component{
                         {name : 'Market Value' , accessor : 'marketValue', unit : '฿' , pos: '#57d500' , neg : '#ff2e00', neutral : '#FFFF00'},
                         {name : 'Average P&L' , accessor : 'avgPL', unit : '%' , pos: '#57d500' , neg : '#ff2e00', neutral : '#FFFF00'},
                         {name : 'Unrealized P&L' , accessor : 'unrealizedPL', unit : '฿' , pos: '#57d500' , neg : '#ff2e00', neutral : '#FFFF00'},
+                        {name : 'Adjusted P&L' , accessor : 'adjUnrealizedPL', unit : '฿' , pos: '#57d500' , neg : '#ff2e00', neutral : '#FFFF00'},
                     ];
                     return (
                         infoTbl.map( (info) =>{

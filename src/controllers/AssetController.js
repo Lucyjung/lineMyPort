@@ -395,8 +395,8 @@ async function getAssetPrice(list) {
         }
         list.asset[i].cost = roundNumber(list.asset[i].cost);
         list.asset[i].ROI = roundNumber((cost.dividend/cost.actualCost)*100);
-        list.asset[i].unrealizedPL = roundNumber((price * list.asset[i].volume) - cost.actualCost);
-        list.asset[i].adjUnrealizedPL = roundNumber((price * list.asset[i].volume) - cost.avgCost);
+        list.asset[i].unrealizedPL = roundNumber((price * list.asset[i].volume) - list.asset[i].cost);
+        list.asset[i].adjUnrealizedPL = roundNumber((price * list.asset[i].volume) - list.asset[i].avgCost);
         list.asset[i].curDividend = roundNumber(cost.curDividend);
         list.asset[i].prevDividend = roundNumber(cost.prevDividend);
         list.asset[i].curDividendPercent = roundNumber((cost.curDividend/cost.actualCost)*100);
@@ -429,16 +429,14 @@ function getAssetCost(histories, isDividend){
         } else if (hist.action.toUpperCase() == Asset.action.sell){
             actualCost -= hist.amount
             avgCost += hist.amount
-        } else if (hist.action.toUpperCase() == Asset.action.dividend){
+        } else if (hist.action.toUpperCase() == Asset.action.dividend && isDividend){
             let histDate = new Date(hist.date)
-            if (isDividend){
-                if ( now.getFullYear() == histDate.getFullYear()){
-                    curDividend += hist.amount;
-                } else if ((now.getFullYear() - 1) == histDate.getFullYear()){
-                    prevDividend += hist.amount;
-                }
-                dividend += hist.amount
+            if ( now.getFullYear() == histDate.getFullYear()){
+                curDividend += hist.amount;
+            } else if ((now.getFullYear() - 1) == histDate.getFullYear()){
+                prevDividend += hist.amount;
             }
+            dividend += hist.amount
             avgCost -= hist.amount
         }
     }
