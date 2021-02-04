@@ -358,7 +358,7 @@ async function getAssetPrice(list) {
         let price = 0;
 
         let asset = getAssetInfo(list.asset[i].type.toUpperCase())
-        let cost = getAssetCost(list.asset[i].history)
+        let cost = getAssetCost(list.asset[i].history, asset.dividend)
         list.asset[i].holdingYear = cost.holdingYear
         if (asset.dividend){
             list.asset[i].cost = cost.actualCost
@@ -410,7 +410,7 @@ async function getAssetPrice(list) {
     }
     return list;
 }
-function getAssetCost(histories){
+function getAssetCost(histories, isDividend){
     let actualCost = 0;
     let avgCost = 0;
     let now = new Date();
@@ -430,13 +430,15 @@ function getAssetCost(histories){
             avgCost += hist.amount
         } else if (hist.action.toUpperCase() == Asset.action.dividend){
             let histDate = new Date(hist.date)
-            if ( now.getFullYear() == histDate.getFullYear()){
-                curDividend += hist.amount;
-            } else if ((now.getFullYear() - 1) == histDate.getFullYear()){
-                prevDividend += hist.amount;
+            if (isDividend){
+                if ( now.getFullYear() == histDate.getFullYear()){
+                    curDividend += hist.amount;
+                } else if ((now.getFullYear() - 1) == histDate.getFullYear()){
+                    prevDividend += hist.amount;
+                }
+                dividend += hist.amount
             }
             avgCost -= hist.amount
-            dividend += hist.amount
         }
     }
     return {actualCost, avgCost, holdingYear, dividend, curDividend, prevDividend}
