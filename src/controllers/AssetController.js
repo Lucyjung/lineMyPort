@@ -388,7 +388,7 @@ async function getAssetPrice(list) {
         }
         list.asset[i].marketPrice = price;
         if (list.asset[i].cost !=  0 && price != 0){
-            let actualCostPerShare = cost.avgCost/list.asset[i].volume
+            let actualCostPerShare = cost.actualCost/list.asset[i].volume
             list.asset[i].PL = (price - list.asset[i].avgCost)/actualCostPerShare*100;
             list.asset[i].avgPL = list.asset[i].PL/list.asset[i].holdingYear
         }
