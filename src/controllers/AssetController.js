@@ -432,7 +432,7 @@ function getAssetCost(histories, isDividend){
             avgCost += hist.amount
         } else if (hist.action.toUpperCase() == Asset.action.sell){
             actualCost -= hist.amount
-            avgCost += hist.amount
+            avgCost -= hist.amount
         } else if (hist.action.toUpperCase() == Asset.action.dividend && isDividend){
             let histDate = new Date(hist.date)
             if ( now.getFullYear() == histDate.getFullYear()){
