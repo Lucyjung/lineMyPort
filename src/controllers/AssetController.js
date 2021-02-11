@@ -54,7 +54,7 @@ module.exports = {
                 'Unknown': 0
             };
             for (const prof of list.profit){
-                summary['Realized P/L'] += roundNumber(prof.profit)
+                summary['Realized P/L'] += roundNumber(prof.profit);
             }
             for (const asset of ASSET_TYPE){
                 summary[capitalizedFirstChar(asset.field)] = 0;
@@ -72,26 +72,23 @@ module.exports = {
                     summary.Unknown += roundNumber(list.asset[i].cost);
                 }
                 if (summary['Holding Year'] < list.asset[i].holdingYear){
-                    summary['Holding Year'] = list.asset[i].holdingYear
+                    summary['Holding Year'] = list.asset[i].holdingYear;
                 }
                 list.asset[i].cost = numberWithCommas(list.asset[i].cost);
                 list.asset[i].PL = (list.asset[i].PL).toFixed(2);
                 list.asset[i].avgCost = numberWithCommas(list.asset[i].avgCost);
                 list.asset[i].marketValue = numberWithCommas(list.asset[i].marketPrice * list.asset[i].volume);
             }
-            summary['Total Market Value'] = summary['Total Market Value']
-            summary['Total Average Cost Value'] = summary['Total Average Cost Value']
-            summary['Realized P/L'] = summary['Realized P/L']
             summary['Total Dividend'] = summary['Total Cost Value'] - summary['Total Average Cost Value'];
-            summary['Unrealized P/L'] = summary['Total Market Value'] - summary['Total Cost Value']
+            summary['Unrealized P/L'] = summary['Total Market Value'] - summary['Total Cost Value'];
             summary['Unrealized P/L Percentage (%)'] = summary['Unrealized P/L']/summary['Total Cost Value'] * 100;
-            summary['Total Return'] = summary['Total Market Value'] - summary['Total Cost Value'] + summary['Total Dividend'] + summary['Realized P/L']
-            summary['Total Return Percentage (%)'] = summary['Total Return']/summary['Total Cost Value'] * 100
-            summary['Average Return Percentage (%)'] = summary['Total Return Percentage (%)']/summary['Holding Year']
+            summary['Total Return'] = summary['Total Market Value'] - summary['Total Cost Value'] + summary['Total Dividend'] + summary['Realized P/L'];
+            summary['Total Return Percentage (%)'] = summary['Total Return']/summary['Total Cost Value'] * 100;
+            summary['Average Return Percentage (%)'] = summary['Total Return Percentage (%)']/summary['Holding Year'];
             summary['ROI (%)'] = summary['Total Dividend']/summary['Total Cost Value'] * 100;
             let today = new Date();
-            summary['This Year Dividend (%)'] = list.dividendList[String(today.getFullYear())].amount*100/summary['Total Cost Value']
-            summary['Previous Year Dividend (%)'] = list.dividendList[String(today.getFullYear() - 1)].amount*100/summary['Total Cost Value']
+            summary['This Year Dividend (%)'] = list.dividendList[String(today.getFullYear())].amount*100/summary['Total Cost Value'];
+            summary['Previous Year Dividend (%)'] = list.dividendList[String(today.getFullYear() - 1)].amount*100/summary['Total Cost Value'];
             returnMsg.status = true;
             returnMsg.msg = 'Success';
             returnMsg.data = list.asset;
@@ -278,10 +275,10 @@ function getAssetList(assetSnap){
 
         let profitList = [];
         let dividendList = {};
-        let result = {asset : assetList, profit: profitList, dividendList: dividendList}
+        let result = {asset : assetList, profit: profitList, dividendList: dividendList};
         for (const asset of ASSET_TYPE){
             if (asset.toUpdatePrice){
-                result[asset.field] = []
+                result[asset.field] = [];
             }
         }
         assetSnap.forEach( (asset) => {
@@ -298,7 +295,7 @@ function getAssetList(assetSnap){
                 assetInfo.avgCost = asset.data().cost/asset.data().volume;
                 let info = getAssetInfo(assetInfo.type.toUpperCase());
                 if (info.toUpdatePrice ){
-                    result[info.field].push(asset.data().name)
+                    result[info.field].push(asset.data().name);
                 }
                 assetList.push(assetInfo);
             }
@@ -357,24 +354,24 @@ async function getAssetPrice(list) {
 
         let price = 0;
 
-        let asset = getAssetInfo(list.asset[i].type.toUpperCase())
-        let cost = getAssetCost(list.asset[i].history, asset.dividend)
-        list.asset[i].holdingYear = cost.holdingYear
+        let asset = getAssetInfo(list.asset[i].type.toUpperCase());
+        let cost = getAssetCost(list.asset[i].history, asset.dividend);
+        list.asset[i].holdingYear = cost.holdingYear;
         if (asset.dividend){
-            list.asset[i].cost = cost.actualCost
+            list.asset[i].cost = cost.actualCost;
         } else {
             cost.actualCost = list.asset[i].cost;
             cost.avgCost = list.asset[i].cost;
         }
         if (asset.toUpdatePrice == false){
             if (asset.dividend){
-                list.asset[i].avgCost = cost.avgCost/list.asset[i].volume
+                list.asset[i].avgCost = cost.avgCost/list.asset[i].volume;
             }
             price = list.asset[i].cost;
         }
         else if (asset.individual){
             if (list[asset.field].length > 0 && list[asset.field].indexOf(list.asset[i].symbol) > -1){
-                price = await asset.updateFunc(list.asset[i].symbol)
+                price = await asset.updateFunc(list.asset[i].symbol);
             } 
         } else {
             if (priceList[asset.field] && priceList[asset.field][list.asset[i].symbol] ){
@@ -388,9 +385,9 @@ async function getAssetPrice(list) {
         }
         list.asset[i].marketPrice = price;
         if (list.asset[i].cost !=  0 && price != 0){
-            let actualCostPerShare = cost.actualCost/list.asset[i].volume
+            let actualCostPerShare = cost.actualCost/list.asset[i].volume;
             list.asset[i].PL = (price - list.asset[i].avgCost)/actualCostPerShare*100;
-            list.asset[i].avgPL = list.asset[i].PL/list.asset[i].holdingYear
+            list.asset[i].avgPL = list.asset[i].PL/list.asset[i].holdingYear;
         }
         else{
             list.asset[i].PL = 0;
@@ -398,8 +395,8 @@ async function getAssetPrice(list) {
         }
         list.asset[i].cost = roundNumber(list.asset[i].cost);
         list.asset[i].ROI = roundNumber((cost.dividend/cost.actualCost)*100);
-        list.asset[i].avgCost = roundNumber(list.asset[i].avgCost);
         list.asset[i].totalAvgCost = roundNumber(list.asset[i].avgCost * list.asset[i].volume);
+        list.asset[i].avgCost = roundNumber(list.asset[i].avgCost);
         list.asset[i].unrealizedPL = roundNumber((price * list.asset[i].volume) - cost.actualCost);
         list.asset[i].adjUnrealizedPL = roundNumber((price * list.asset[i].volume) - cost.avgCost);
         list.asset[i].curDividend = roundNumber(cost.curDividend);
@@ -428,32 +425,32 @@ function getAssetCost(histories, isDividend){
     for (let hist of histories){
         
         if (hist.action.toUpperCase() == Asset.action.buy){
-            actualCost += hist.amount
-            avgCost += hist.amount
+            actualCost += hist.amount;
+            avgCost += hist.amount;
         } else if (hist.action.toUpperCase() == Asset.action.sell){
-            actualCost -= hist.amount
-            avgCost -= hist.amount
+            actualCost -= hist.amount;
+            avgCost -= hist.amount;
         } else if (hist.action.toUpperCase() == Asset.action.dividend && isDividend){
-            let histDate = new Date(hist.date)
+            let histDate = new Date(hist.date);
             if ( now.getFullYear() == histDate.getFullYear()){
                 curDividend += hist.amount;
             } else if ((now.getFullYear() - 1) == histDate.getFullYear()){
                 prevDividend += hist.amount;
             }
-            dividend += hist.amount
-            avgCost -= hist.amount
+            dividend += hist.amount;
+            avgCost -= hist.amount;
         }
     }
-    return {actualCost, avgCost, holdingYear, dividend, curDividend, prevDividend}
+    return {actualCost, avgCost, holdingYear, dividend, curDividend, prevDividend};
 }
 function numberWithCommas(num , digit=2) {
     return num.toFixed(digit).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 function capitalizedFirstChar(str){
-    return str.charAt(0).toUpperCase() + str.slice(1)
+    return str.charAt(0).toUpperCase() + str.slice(1);
 }
 function roundNumber(num , digit=2){
-    return parseFloat(parseFloat(num).toFixed(digit))
+    return parseFloat(parseFloat(num).toFixed(digit));
 }
 function getAssetInfo(name){
     for (const asset of ASSET_TYPE){
