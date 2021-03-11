@@ -3,7 +3,7 @@ const axios = require('axios');
 module.exports = {
 
     getPrice: async (symbols) => {
-        const LIMIT_RETRIES = 9;
+        const LIMIT_RETRIES = 15;
         if (symbols.length <= 0){
             return null;
         }
