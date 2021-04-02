@@ -7,12 +7,11 @@ module.exports = {
             return null;
         }
         else{
-
-            let response = await axios.get('https://api.exchangeratesapi.io/latest?base=THB');
             let result = {};
             for (let symbol of symbols){
-                if (response && response.data && response.data.rates[symbol]){
-                    result[symbol] = 1/response.data.rates[symbol]
+                let response = await axios.get('https://free.currconv.com/api/v7/convert?q=' + symbol + '_THB&compact=ultra&apiKey=6f00b379453f8372bc23');
+                if (response && response.data && response.data[symbol + '_THB']){
+                    result[symbol] = response.data[symbol + '_THB']
                 }
             }
             return result;
